@@ -166,7 +166,22 @@ def quitHandler(event=None):
 #   event -
 ###
 def aboutHandler(event=None):
-    print("ABOUT")
+    # Create new about window
+    aboutWindow = Toplevel()
+    aboutWindow.title("About")
+    aboutWindow.resizable(FALSE, FALSE)
+    
+    # Create main frame for about window
+    aboutFrame = ttk.Frame(aboutWindow, padding=(5,5))
+    
+    # Create text box to store about information
+    aboutTextBox = Text(aboutFrame, borderwidth=3, relief="sunken", width=40, height=15)
+    aboutTextBox.config(font=("consolas", 12), wrap="word")
+    aboutTextBox.insert('1.0', DEFAULT_TEXTBOX_TEXT)
+    
+    # Adding text box and main frame to the window
+    aboutTextBox.grid(column=0, row=0)
+    aboutFrame.grid(column=0, row=0, sticky=(N,S,E,W))
 
 ### instructionsHandler
 # param:
