@@ -7,6 +7,8 @@
 from tkinter import *
 from tkinter import ttk
 
+DEFAULT_TEXTBOX_TEXT = "Enter a query..."
+
 ### createGUI:
 # Creates the user interface for the application. Creates front end 
 # widgets and attaches them to the appropriate handlers.
@@ -23,22 +25,24 @@ def createGUI(app=None):
 
     # File menu
     filemenu = Menu(menubar)
-    filemenu.add_command(label="Upload", command=None)
-    filemenu.add_command(label="Open", command=None)
-    filemenu.add_command(label="Save", command=None)
-    filemenu.add_command(label="Save As...", command=None)
+    filemenu.add_command(label="Upload", command=uploadHandler)
+    filemenu.add_command(label="Open", command=openHandler)
+    filemenu.add_command(label="Save", command=saveHandler)
+    filemenu.add_command(label="Save As...", command=saveAsHandler)
     filemenu.add_separator()
     filemenu.add_command(label="Exit", command=app.quit)
     
     # Command menu
     actionmenu = Menu(menubar)
-    actionmenu.add_command(label="Execute", command=None)
-    actionmenu.add_command(label="Reset", command=None)
+    actionmenu.add_command(label="Execute", command=executeHandler)
+    actionmenu.add_command(label="Run Test Cases", command=runTestCasesHandler)
+    actionmenu.add_separator()
+    actionmenu.add_command(label="Reset", command=resetHandler)
     
     # Help menu
     helpmenu = Menu(menubar)
-    helpmenu.add_command(label="About", command=None)
-    helpmenu.add_command(label="Instructions", command=None)
+    helpmenu.add_command(label="About", command=aboutHandler)
+    helpmenu.add_command(label="Instructions", command=instructionsHandler)
     
     # Adding menus to menu bar
     menubar.add_cascade(menu=filemenu, label="File")
@@ -51,9 +55,9 @@ def createGUI(app=None):
     btnFrame = ttk.Frame(window, padding=(5, 5))
     
     # Creating action buttons
-    openBtn = ttk.Button(btnFrame, text="Open", command=None)
-    saveBtn = ttk.Button(btnFrame, text="Save", command=None)
-    uploadBtn = ttk.Button(btnFrame, text="Upload", command=None)
+    openBtn = ttk.Button(btnFrame, text="Open", command=openHandler)
+    saveBtn = ttk.Button(btnFrame, text="Save", command=saveHandler)
+    uploadBtn = ttk.Button(btnFrame, text="Upload", command=uploadHandler)
 
     # Adding action buttons to frame
     openBtn.grid(column=0, row=0, sticky=(W))
@@ -63,21 +67,45 @@ def createGUI(app=None):
     # Adding action button frame to window
     btnFrame.grid(column=0, row=0, sticky=(W,E))
     """ End action buttons frame """
+    
+    ttk.Separator(window, orient=HORIZONTAL).grid(column=0, row=1, sticky=(W,E))
 
     """ Query frame """
     queryFrame = ttk.Frame(window, padding=(5, 5))
 
     # Creating query widgets
-    executeBtn = ttk.Button(queryFrame, text="Execute", command=None)
-    queryEntry = ttk.Entry(queryFrame, textvariable=userQuery)
+    executeBtn = ttk.Button(queryFrame, text="Execute", command=executeHandler)
+    queryEntry = ttk.Entry(queryFrame, textvariable=userQuery, width=30)
 
     # Adding query widgets to frame
     queryEntry.grid(column=0, row=0)
     executeBtn.grid(column=1, row=0)
 
     # Adding query widgets frame to window
-    queryFrame.grid(column=0, row=1, sticky=(W,E))
+    queryFrame.grid(column=0, row=2, sticky=(W,E))
     """ End query entry frame """
+    
+    ttk.Separator(window, orient=HORIZONTAL).grid(column=0, row=3, sticky=(W,E))
+    
+    """ Text frame """
+    textFrame = ttk.Frame(window, padding=(5, 5))
+    
+    # Creating text box
+    textBox = Text(textFrame, borderwidth=3, relief="sunken", width=60, height=30)
+    textBox.config(font=("consolas", 12), wrap="word")
+    textBox.insert('1.0', DEFAULT_TEXTBOX_TEXT)
+    
+    # Creating scrollbar for textbox
+    textBoxScrollBar = ttk.Scrollbar(textFrame, command=textBox.yview)
+    textBox.config(yscrollcommand=textBoxScrollBar.set, state=DISABLED)
+    
+    # Adding text box and scrollbar to the text box frame
+    textBox.grid(column=0, row=0)
+    textBoxScrollBar.grid(column=1, row=0, sticky=(N,S,E,W))
+    
+    # Adding text box frame to the window
+    textFrame.grid(column=0, row=4)
+    """ End text frame """
 
     # Adding main window to app
     window.grid(column=0, row=0, sticky=(N,S,E,W))
@@ -147,6 +175,14 @@ def aboutHandler(event=None):
 def instructionsHandler(event=None):
     print("INSTRUCTIONS")
 
+### runTestCasesHandler
+# param:
+#   event -
+###
+def runTestCasesHandler(event=None):
+    print("RUN TEST CASES")
+
+""" END ACTION HANDLERS """
 
 if __name__=="__main__":
     app = Tk()
