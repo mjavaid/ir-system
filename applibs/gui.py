@@ -7,10 +7,10 @@
 from tkinter import *
 from tkinter import ttk
 
-""" createGUI:
+### createGUI:
 # Creates the user interface for the application. Creates front end 
 # widgets and attaches them to the appropriate handlers.
-"""
+###
 def createGUI(app=None):
     if app == None:
         print("No Root Provided")
@@ -79,7 +79,73 @@ def createGUI(app=None):
     queryFrame.grid(column=0, row=1, sticky=(W,E))
     """ End query entry frame """
 
+    # Adding main window to app
     window.grid(column=0, row=0, sticky=(N,S,E,W))
+
+""" ACTION HANDLERS """
+
+### uploadHandler
+# param:
+#   event -
+###
+def uploadHandler(event=None):
+    print("UPLOAD")
+
+### executeHandler
+# param:
+#   event -
+###
+def executeHandler(event=None):
+    print("EXECUTE")
+
+### resetHandler
+# param:
+#   event -
+###
+def resetHandler(event=None):
+    print("RESET")
+
+### openHandler
+# param:
+#   event -
+###
+def openHandler(event=None):
+    print("OPEN")
+
+### saveHandler
+# param:
+#   event -
+###
+def saveHandler(event=None):
+    print("SAVE")
+
+### saveAsHandler
+# param:
+#   event -
+###
+def saveAsHandler(event=None):
+    print("SAVE AS")
+
+### quitHandler
+# param:
+#   event -
+###
+def quitHandler(event=None):
+    print("QUIT")
+
+### aboutHandler
+# param:
+#   event -
+###
+def aboutHandler(event=None):
+    print("ABOUT")
+
+### instructionsHandler
+# param:
+#   event -
+###
+def instructionsHandler(event=None):
+    print("INSTRUCTIONS")
 
 
 if __name__=="__main__":
