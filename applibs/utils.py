@@ -4,14 +4,13 @@
 # Last Modified: 1/12/14
 """
 
+STOPWORD_FILE = "../resources/StopWords.txt"
 DOCUMENTS_FILE = "../resources/Trec_microblog11.txt"
 TWEET_ID = 0
 
 """ GLOBAL SYSTEM VARIABLES """
 
-STOPWORD_LIST = [
-    "the", "a", "be", "it"
-]
+STOPWORD_LIST = []
 DOCUMENTS = []
 
 """ END GLOBAL SYSTEM VARIABLES """
@@ -23,17 +22,31 @@ DOCUMENTS = []
 # which will be used for querying.
 ###
 def populateDocuments():
+    global DOCUMENTS
     input = open(DOCUMENTS_FILE, "r")
     docs = (input.read()).split("\n")
     i = 0
-    list = []
     for doc in docs:
         docInfo = doc.split()
         if docInfo:
             DOCUMENTS.append({"D"+str(i):{"id": docInfo[TWEET_ID], "text": docInfo[TWEET_ID+1:]}})
             i += 1
+    input.close()
+
+### populateStopWords
+# Reads the English stop words file and populates the STOPWORD_LIST
+# global variable.
+###
+def populateStopWords():
+    global STOPWORD_LIST
+    input = open(STOPWORD_FILE, "r")
+    stopwords = (input.read()).split("\n")
+    STOPWORD_LIST = [stopword for stopword in stopwords if stopword != ""]
+    input.close()
+
 
 """ END GLOBAL SYSTEM FUNCTIONS """
 
 if __name__ == "__main__":
     populateDocuments()
+    populateStopWords()
