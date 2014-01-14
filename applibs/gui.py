@@ -7,7 +7,7 @@
 from tkinter import *
 from tkinter import ttk
 
-DEFAULT_TEXTBOX_TEXT = "Enter a query..."
+""" DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
 ### createGUI:
 # Creates the user interface for the application. Creates front end 
@@ -35,7 +35,7 @@ def createGUI(app=None):
     # Command menu
     actionmenu = Menu(menubar)
     actionmenu.add_command(label="Execute", command=executeHandler)
-    actionmenu.add_command(label="Run Test Cases", command=runTestCasesHandler)
+    actionmenu.add_command(label="Run Test Queries", command=runTestCasesHandler)
     actionmenu.add_separator()
     actionmenu.add_command(label="Reset", command=resetHandler)
     
@@ -75,7 +75,7 @@ def createGUI(app=None):
 
     # Creating query widgets
     executeBtn = ttk.Button(queryFrame, text="Execute", command=executeHandler)
-    queryEntry = ttk.Entry(queryFrame, textvariable=userQuery, width=30)
+    queryEntry = ttk.Entry(queryFrame, textvariable=userQuery, width=50)
 
     # Adding query widgets to frame
     queryEntry.grid(column=0, row=0)
@@ -88,7 +88,7 @@ def createGUI(app=None):
     ttk.Separator(window, orient=HORIZONTAL).grid(column=0, row=3, sticky=(W,E))
     
     """ Text frame """
-    textFrame = ttk.Frame(window, padding=(5, 5))
+    """textFrame = ttk.Frame(window, padding=(5, 5))
     
     # Creating text box
     textBox = Text(textFrame, borderwidth=3, relief="sunken", width=60, height=30)
@@ -104,8 +104,44 @@ def createGUI(app=None):
     textBoxScrollBar.grid(column=1, row=0, sticky=(N,S,E,W))
     
     # Adding text box frame to the window
-    textFrame.grid(column=0, row=4)
+    textFrame.grid(column=0, row=4)"""
     """ End text frame """
+    
+    """ Tree frame """
+    treeFrame = ttk.Frame(window, padding=(5,5))
+    
+    treeVScrollBar = ttk.Scrollbar(treeFrame, orient=VERTICAL)
+    treeHScrollBar = ttk.Scrollbar(treeFrame, orient=HORIZONTAL)
+    
+    resultTree = ttk.Treeview(treeFrame, columns=("docNo", "rank", "score", "tag"), yscrollcommand=treeVScrollBar.set, xscrollcommand=treeHScrollBar.set)
+    
+    treeVScrollBar['command'] = resultTree.yview
+    treeHScrollBar['command'] = resultTree.xview
+    
+    resultTree.heading("#0", text="Topic ID")
+    resultTree.heading("docNo", text="Doc No.")
+    resultTree.heading("rank", text="Rank")
+    resultTree.heading("score", text="Score")
+    resultTree.heading("tag", text="Tag")
+    
+    resultTree.column("#0", width=100)
+    resultTree.column("docNo", width=150)
+    resultTree.column("rank", width=100)
+    resultTree.column("score", width=100)
+    resultTree.column("tag", width=100)
+    
+    resultTree.grid(column=0, row=0, sticky=(N,S,E,W))
+    treeHScrollBar.grid(column=0, row=1, sticky=(E,W))
+    treeVScrollBar.grid(column=1, row=0, sticky=(N,S))
+    
+    results = []
+    for i in range(50):
+        results.append(['a', 'b', 'c', 'd'])
+    
+    populateResults(resultTree, results)
+    
+    treeFrame.grid(column=0, row=4)
+    """ End tree frame """
 
     # Adding main window to app
     window.grid(column=0, row=0, sticky=(N,S,E,W))
@@ -198,6 +234,22 @@ def runTestCasesHandler(event=None):
     print("RUN TEST CASES")
 
 """ END ACTION HANDLERS """
+
+""" FUNCTIONAL METHODS """
+
+### populateResults
+# param:
+#   treeview -
+#   results  -
+###
+def populateResults(resultTree, results):
+    for iid in resultTree.get_children(): resultTree.delete(iid)
+    i = 0
+    for result in results:
+        resultTree.insert('', 'end', text=str(i), values=result)
+        i += 1
+
+""" END FUNCTIONAL METHODS """
 
 if __name__=="__main__":
     app = Tk()
