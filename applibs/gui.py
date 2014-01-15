@@ -14,10 +14,12 @@ except ImportError:
     import TkFileDialog as filedialog
 
 import time
+from xml.etree.ElementTree import parse
+from xml.etree.ElementTree import ParseError
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 RESULT_TREE = None
-userQuery = None
+USER_QUERY = None
 APP_STATUS = None
 PROGRESS_BAR = None
 
@@ -30,9 +32,10 @@ def createGUI(app=None):
         print("No Root Provided")
         return
     
-    global RESULT_TREE, APP_STATUS, PROGRESS_BAR
+    global RESULT_TREE, APP_STATUS, PROGRESS_BAR, USER_QUERY
 
     APP_STATUS = StringVar()
+    USER_QUERY = StringVar()
 
     window = ttk.Frame(app)
 
@@ -78,7 +81,8 @@ def createGUI(app=None):
     # Adding action buttons to frame
     openBtn.grid(column=0, row=0, sticky=(W))
     saveBtn.grid(column=1, row=0, sticky=(W))
-    uploadBtn.grid(column=2, row=0, sticky=(W))
+    ttk.Separator(btnFrame, orient=VERTICAL).grid(column=2, row=0, sticky=(N,S), padx=(10, 10))
+    uploadBtn.grid(column=3, row=0, sticky=(W))
 
     # Adding action button frame to window
     btnFrame.grid(column=0, row=0, sticky=(W,E))
@@ -91,7 +95,7 @@ def createGUI(app=None):
 
     # Creating query widgets
     executeBtn = ttk.Button(queryFrame, text="Execute", command=executeHandler)
-    queryEntry = ttk.Entry(queryFrame, textvariable=userQuery, width=50)
+    queryEntry = ttk.Entry(queryFrame, textvariable=USER_QUERY, width=50)
 
     # Adding query widgets to frame
     queryEntry.grid(column=0, row=0)
@@ -203,9 +207,49 @@ def createGUI(app=None):
 # param:
 #   event -
 ###
-def uploadHandler(event=None):
-    print("UPLOAD")
-    setAppStatus("Uploading document...")
+def uploadHandler(event=None, filename=None):
+    progressInfo = {"maximum": 4, "value": 0}
+    global USER_QUERY
+    if filename == None:
+        uploadFileName = filedialog.askopenfilename(filetypes=(
+            ('Text File', '*.txt'),
+            ('XML File', '*.xml'),
+            ('All Files', '*.*')
+        ))
+    else: openFileName = filename
+    if uploadFileName == "": return
+    progressInfo["value"] += 1
+    setTaskProgress(progressInfo)
+    time.sleep(2)
+    try:
+        setAppStatus("Uploading query file... %s" % ((uploadFileName).split("/"))[-1])
+        progressInfo["value"] += 1
+        setTaskProgress(progressInfo)
+        time.sleep(2)
+    except FileNotFoundError:
+        setAppStatus("Error: File Not Found")
+        progressInfo["value"] = progressInfo["maximum"]
+        setTaskProgress(progressInfo)
+        return
+    setAppStatus("Parsing file...")
+    progressInfo["value"] += 1
+    setTaskProgress(progressInfo)
+    time.sleep(2)
+    try:
+        topics = parse(uploadFileName)
+    except ParseError:
+        setAppStatus("Error: Invalid File Structure")
+        progressInfo["value"] = progressInfo["maximum"]
+        setTaskProgress(progressInfo)
+        return
+    for topic in topics.findall('top'):
+        print(topic.findtext('num'))
+    setAppStatus("User queries set. Press <EXECUTE> to run.")
+    progressInfo["value"] += 1
+    setTaskProgress(progressInfo)
+    USER_QUERY.set("[USER_QUERIES]")
+    time.sleep(2)
+
 
 ### executeHandler
 # param:
@@ -213,7 +257,8 @@ def uploadHandler(event=None):
 ###
 def executeHandler(event=None):
     print("EXECUTE")
-    setAppStatus("Executing query...")
+    global USER_QUERY
+    setAppStatus("Executing query... \"%s\"" % USER_QUERY.get())
 
 ### resetHandler
 # param:
