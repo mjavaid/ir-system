@@ -205,12 +205,10 @@ class APPLICATION(Tk):
         if uploadFileName == "": return
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        self.update_idletasks()
         try:
             self.setAppStatus("Uploading query file... %s" % ((uploadFileName).split("/"))[-1])
             progressInfo["value"] += 1
             self.setTaskProgress(progressInfo)
-            self.update_idletasks()
         except FileNotFoundError:
             self.setAppStatus("Error: File Not Found")
             progressInfo["value"] = progressInfo["maximum"]
@@ -219,7 +217,6 @@ class APPLICATION(Tk):
         self.setAppStatus("Parsing file...")
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        self.update_idletasks()
         try:
             topics = parse(uploadFileName)
         except ParseError:
@@ -240,7 +237,7 @@ class APPLICATION(Tk):
     #   event -
     ###
     def executeHandler(self, event=None):
-        print("EXECUTE")
+        print("TODO: EXECUTE")
         self.setAppStatus("Executing query... \"%s\"" % self.USER_QUERY.get())
 
     ### openHandler
@@ -257,18 +254,15 @@ class APPLICATION(Tk):
         if openFileName == "": return
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        self.update_idletasks()
         try:
             self.setAppStatus("Opening file... %s" % ((openFileName).split("/"))[-1])
             input = open(openFileName, "r")
             progressInfo["value"] += 1
             self.setTaskProgress(progressInfo)
-            self.update_idletasks()
         except FileNotFoundError:
             self.setAppStatus("Error: File Not Found")
             progressInfo["value"] = progressInfo["maximum"]
             self.setTaskProgress(progressInfo)
-            self.update_idletasks()
             return
         fileContents = (input.read()).split("\n")
         results = [result.split(",") for result in fileContents if result != ""]
@@ -276,12 +270,10 @@ class APPLICATION(Tk):
             self.setAppStatus("Error: Invalid File Format")
             progressInfo["value"] = progressInfo["maximum"]
             self.setTaskProgress(progressInfo)
-            self.update_idletasks()
             return
         self.setAppStatus("Populating results...")
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        self.update_idletasks()
         if self.SAVE_FILE != False and self.MODIFIED:
             shouldSave = messagebox.askquestion("Unsaved Changes",
                 "Save Changes?", icon="warning")
@@ -309,7 +301,7 @@ class APPLICATION(Tk):
     #   event -
     ###
     def saveAsHandler(self, event=None):
-        print("SAVE AS")
+        if len(self.RESULT_TREE.get_children()) == 0: return
         saveAsFileName = filedialog.asksaveasfilename(filetypes=[
             ('Text File', '*.txt'),
             ('All Files', '*.*')
@@ -321,7 +313,7 @@ class APPLICATION(Tk):
     #   event -
     ###
     def quitHandler(self, event=None):
-        print("QUIT")
+        print("TODO: QUIT")
 
     ### aboutHandler
     # param:
@@ -354,14 +346,14 @@ class APPLICATION(Tk):
     #   event -
     ###
     def instructionsHandler(self, event=None):
-        print("INSTRUCTIONS")
+        print("TODO: INSTRUCTIONS")
 
     ### runTestCasesHandler
     # param:
     #   event -
     ###
     def runTestCasesHandler(self, event=None):
-        print("RUN TEST CASES")
+        print("TODO: RUN TEST CASES")
         self.setAppStatus("Running test cases...")
 
     """ END ACTION HANDLERS """
@@ -385,7 +377,6 @@ class APPLICATION(Tk):
     ###
     def saveResults(self, filename):
         self.setAppStatus("Saving results...")
-        self.update_idletasks()
         results = []
         i = 0
         for iid in self.RESULT_TREE.get_children():
@@ -404,6 +395,7 @@ class APPLICATION(Tk):
     ###
     def setAppStatus(self, message):
         self.APP_STATUS.set(message)
+        self.update_idletasks()
 
     ### setTaskProgress
     # param:
@@ -413,6 +405,7 @@ class APPLICATION(Tk):
         if self.PROGRESS_BAR['maximum'] != progressInfo['maximum']:
             self.PROGRESS_BAR['maximum'] = progressInfo['maximum']
         self.PROGRESS_BAR['value'] = progressInfo['value']
+        self.update_idletasks()
 
     """ END FUNCTIONAL METHODS """
 
