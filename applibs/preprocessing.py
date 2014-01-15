@@ -17,17 +17,15 @@ import time
 ###
 def filterDocs():
     for doc in range(len(DOCUMENTS)):
-        for word in DOCUMENTS[doc]["D"+str(doc)]['text']:
+        words = DOCUMENTS[doc]["D"+str(doc)]['text'].split(" ")
+        for word in words:
             try:
                 stemmedWord = stemWord(word)
-                DOCUMENTS[doc]["D"+str(doc)]['text'].remove(word)
+                DOCUMENTS[doc]["D"+str(doc)]['text'] = DOCUMENTS[doc]["D"+str(doc)]['text'].replace(" "+word+" ", " "+stemmedWord+" ")
             except IndexError:
-                print(doc)
-                stemmedWord = word
-            DOCUMENTS[doc]["D"+str(doc)]['text'].append(stemmedWord)
-        for stopword in STOPWORD_LIST:
-            if stopword in DOCUMENTS[doc]["D"+str(doc)]['text']:
-                DOCUMENTS[doc]["D"+str(doc)]['text'].remove(stopword)
+                pass
+            if word in STOPWORD_LIST:
+                DOCUMENTS[doc]["D"+str(doc)]['text'] = DOCUMENTS[doc]["D"+str(doc)]['text'].replace(" "+word+" ", " ")
 
 ### stemWord
 # param:
@@ -44,7 +42,7 @@ if __name__ == "__main__":
     print("Stop Word Population Execution Time:", time.time() - start_time)
     populateDocuments()
     print("Document Population Execution Time:", time.time() - start_time)
-    print(DOCUMENTS[39813]["D39813"]['text'])
+    print(DOCUMENTS[0]["D0"]['text'])
     filterDocs()
-    print(DOCUMENTS[39813]["D39813"]['text'])
+    print(DOCUMENTS[0]["D0"]['text'])
     print("Filter Documents:", time.time() - start_time)
