@@ -36,6 +36,7 @@ class APPLICATION(Tk):
         Tk.__init__(self, *args, **kwargs)
         self.title("IR System - CSI4107")
         self.resizable(FALSE, FALSE)
+        self.wm_protocol("WM_DELETE_WINDOW", self.quitHandler)
         self.APP_STATUS = StringVar()
         self.USER_QUERY = StringVar()
         self.createGUI()
@@ -57,7 +58,7 @@ class APPLICATION(Tk):
         filemenu.add_command(label="Save", command=self.saveHandler)
         filemenu.add_command(label="Save As...", command=self.saveAsHandler)
         filemenu.add_separator()
-        filemenu.add_command(label="Exit", command=self.quit)
+        filemenu.add_command(label="Exit", command=self.quitHandler)
     
         # Command menu
         actionmenu = Menu(menubar)
@@ -291,7 +292,7 @@ class APPLICATION(Tk):
     #   event -
     ###
     def saveHandler(self, event=None):
-        if not self.MODIFIED or len(self.RESULT_TREE.get_children()) == 0: return
+        if len(self.RESULT_TREE.get_children()) == 0: return
         else:
             if self.SAVE_FILE == False: self.saveAsHandler(event)
             else: self.saveResults(self.SAVE_FILE)
@@ -313,7 +314,10 @@ class APPLICATION(Tk):
     #   event -
     ###
     def quitHandler(self, event=None):
-        print("TODO: QUIT")
+        if self.MODIFIED:
+            shouldSave = messagebox.askquestion("Unsaved Changes", "Save Changes?", icon="warning")
+            if shouldSave == "yes": self.saveHandler()
+        self.quit()
 
     ### aboutHandler
     # param:
@@ -369,7 +373,7 @@ class APPLICATION(Tk):
         for iid in self.RESULT_TREE.get_children(): self.RESULT_TREE.delete(iid)
         for result in results:
             self.RESULT_TREE.insert('', 'end', text=result[0], values=result[1:])
-        if self.SAVE_FILE != False: self.MODIFIED = True
+        self.MODIFIED = True
 
     ### saveResults
     # param:
