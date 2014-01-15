@@ -6,10 +6,12 @@
 
 from utils import STOPWORD_LIST, DOCUMENTS
 from exlibraries.porter2 import stem
+import re
 # Temporarily imported for the main method
 from utils import populateDocuments, populateStopWords
 # Temporarily imported for execution testing
 import time
+from sre_constants import error
 
 
 ### filterStopWordsFromDocs
@@ -17,15 +19,39 @@ import time
 ###
 def filterDocs():
     for doc in range(len(DOCUMENTS)):
-        words = DOCUMENTS[doc]["D"+str(doc)]['text'].split(" ")
-        for word in words:
-            try:
-                stemmedWord = stemWord(word)
-                DOCUMENTS[doc]["D"+str(doc)]['text'] = DOCUMENTS[doc]["D"+str(doc)]['text'].replace(" "+word+" ", " "+stemmedWord+" ")
-            except IndexError:
-                pass
-            if word in STOPWORD_LIST:
-                DOCUMENTS[doc]["D"+str(doc)]['text'] = DOCUMENTS[doc]["D"+str(doc)]['text'].replace(" "+word+" ", " ")
+        DOCUMENTS[doc]["D"+str(doc)]['text'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['text'])
+
+### filterQuery
+# param:
+#   query -
+#
+# Filters a query before it is executed.
+###
+def filterQuery(query):
+    return filterData(query)
+
+### filterData
+# param:
+#   data -
+#
+# A generic filter function that is used as a helper for other functions.
+###
+def filterData(data):
+    global STOPWORD_LIST
+    result = data
+    words = result.split(" ")
+    for word in words:
+        if word in STOPWORD_LIST:
+            result = re.sub("\\b"+word+"\\b", "", result)
+            continue
+        try:
+            stemmedWord = stemWord(word)
+            result = re.sub("\\b"+word+"\\b", stemmedWord, result)
+        except IndexError:
+            pass
+        except error:
+            pass
+    return result
 
 ### stemWord
 # param:
