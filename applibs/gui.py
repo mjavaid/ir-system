@@ -15,6 +15,8 @@ except ImportError:
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 RESULT_TREE = None
+userQuery = None
+APP_STATUS = None
 
 ### createGUI:
 # Creates the user interface for the application. Creates front end 
@@ -25,8 +27,10 @@ def createGUI(app=None):
         print("No Root Provided")
         return
     
-    global RESULT_TREE
-    
+    global RESULT_TREE, APP_STATUS
+
+    APP_STATUS = StringVar()
+
     window = ttk.Frame(app)
 
     """ Top menu bar """
@@ -169,7 +173,7 @@ def createGUI(app=None):
     statusFrame = ttk.Frame(window, padding=(5,5))
 
     # Creating status label
-    statusLabel = ttk.Label(statusFrame, textvariable=appStatus)
+    statusLabel = ttk.Label(statusFrame, textvariable=APP_STATUS)
 
     # Adding status label to status frame
     statusLabel.grid(column=0, row=0, sticky=(N,S,E,W))
@@ -189,7 +193,7 @@ def createGUI(app=None):
 ###
 def uploadHandler(event=None):
     print("UPLOAD")
-    appStatus.set("Uploading document...")
+    setAppStatus("Uploading document...")
 
 ### executeHandler
 # param:
@@ -197,7 +201,7 @@ def uploadHandler(event=None):
 ###
 def executeHandler(event=None):
     print("EXECUTE")
-    appStatus.set("Executing query...")
+    setAppStatus("Executing query...")
 
 ### resetHandler
 # param:
@@ -205,7 +209,7 @@ def executeHandler(event=None):
 ###
 def resetHandler(event=None):
     print("RESET")
-    appStatus.set("Resetting...")
+    setAppStatus("Resetting...")
 
 ### openHandler
 # param:
@@ -219,19 +223,19 @@ def openHandler(event=None):
     ))
     if openFileName == "": return
     try:
-        appStatus.set("Opening file... %s" % ((openFileName).split("/"))[-1])
+        setAppStatus("Opening file... %s" % ((openFileName).split("/"))[-1])
         input = open(openFileName, "r")
     except FileNotFoundError:
-        appStatus.set("Error: File Not Found")
+        setAppStatus("Error: File Not Found")
         return
     fileContents = (input.read()).split("\n")
     results = [result.split(",") for result in fileContents if result != ""]
     if len(results[0]) != VALID_LENGTH:
-        appStatus.set("Error: Invalid File Format")
+        setAppStatus("Error: Invalid File Format")
         return
-    appStatus.set("Populating results...")
+    setAppStatus("Populating results...")
     populateResults(RESULT_TREE, results)
-    appStatus.set("Results populated.")
+    setAppStatus("Results populated.")
     input.close()
 
 ### saveHandler
@@ -240,7 +244,7 @@ def openHandler(event=None):
 ###
 def saveHandler(event=None):
     print("SAVE")
-    appStatus.set("Saving results...")
+    setAppStatus("Saving results...")
 
 ### saveAsHandler
 # param:
@@ -248,7 +252,7 @@ def saveHandler(event=None):
 ###
 def saveAsHandler(event=None):
     print("SAVE AS")
-    appStatus.set("Saving results...")
+    setAppStatus("Saving results...")
 
 ### quitHandler
 # param:
@@ -296,7 +300,7 @@ def instructionsHandler(event=None):
 ###
 def runTestCasesHandler(event=None):
     print("RUN TEST CASES")
-    appStatus.set("Running test cases...")
+    setAppStatus("Running test cases...")
 
 """ END ACTION HANDLERS """
 
@@ -312,12 +316,25 @@ def populateResults(resultTree, results):
     for result in results:
         resultTree.insert('', 'end', text=result[0], values=result[1:])
 
+### setAppStatus
+# param:
+#   message -
+###
+def setAppStatus(message):
+    global APP_STATUS
+    APP_STATUS.set(message)
+
+### setTaskProgress
+# param:
+#   progressInfo -
+###
+def setTaskProgress(progressInfo):
+    print("TO DO: TASK PROGRESS")
+
 """ END FUNCTIONAL METHODS """
 
 if __name__=="__main__":
     app = Tk()
-    userQuery = StringVar()
-    appStatus = StringVar()
     app.title("IR System - CSI4107")
     app.resizable(FALSE, FALSE)
     createGUI(app)
