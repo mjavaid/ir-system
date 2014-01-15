@@ -41,7 +41,9 @@ def populateStopWords():
     global STOPWORD_LIST
     input = open(STOPWORD_FILE, "r")
     stopwords = (input.read()).split("\n")
-    STOPWORD_LIST = [stopword for stopword in stopwords if stopword != ""]
+    for stopword in stopwords:
+        if stopword != "": STOPWORD_LIST.append(stopword)
+    #STOPWORD_LIST = [stopword for stopword in stopwords if stopword != ""]
     input.close()
 
 
@@ -50,3 +52,5 @@ def populateStopWords():
 if __name__ == "__main__":
     populateDocuments()
     populateStopWords()
+    #print(DOCUMENTS)
+    print(STOPWORD_LIST)
