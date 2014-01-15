@@ -7,6 +7,7 @@
 STOPWORD_FILE = "../resources/StopWords.txt"
 DOCUMENTS_FILE = "../resources/Trec_microblog11.txt"
 TWEET_ID = 0
+TEXT_INDEX = 2
 
 """ GLOBAL SYSTEM VARIABLES """
 
@@ -27,9 +28,9 @@ def populateDocuments():
     docs = (input.read()).split("\n")
     i = 0
     for doc in docs:
-        docInfo = doc.split()
-        if docInfo:
-            DOCUMENTS.append({"D"+str(i):{"id": docInfo[TWEET_ID], "text": docInfo[TWEET_ID+1:]}})
+        docInfo = doc.partition("\t")
+        if docInfo[TEXT_INDEX]:
+            DOCUMENTS.append({"D"+str(i):{"id": docInfo[TWEET_ID], "text": docInfo[TEXT_INDEX]}})
             i += 1
     input.close()
 
@@ -43,7 +44,6 @@ def populateStopWords():
     stopwords = (input.read()).split("\n")
     for stopword in stopwords:
         if stopword != "": STOPWORD_LIST.append(stopword)
-    #STOPWORD_LIST = [stopword for stopword in stopwords if stopword != ""]
     input.close()
 
 
@@ -53,4 +53,4 @@ if __name__ == "__main__":
     populateDocuments()
     populateStopWords()
     #print(DOCUMENTS)
-    print(STOPWORD_LIST)
+    #print(STOPWORD_LIST)
