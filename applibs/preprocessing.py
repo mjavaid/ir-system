@@ -5,24 +5,45 @@
 """
 
 from utils import STOPWORD_LIST, DOCUMENTS
+from exlibraries.porter2 import stem
+# Temporarily imported for the main method
 from utils import populateDocuments, populateStopWords
+# Temporarily imported for execution testing
+import time
+
 
 ### filterStopWordsFromDocs
 # Filters out the stop words from the documents in the corpus.
 ###
-def filterStopWordsFromDocs():
-    #global STOPWORD_LIST, DOCUMENTS
+def filterDocs():
     i = 0
     for doc in range(len(DOCUMENTS)):
+        for word in DOCUMENTS[doc]["D"+str(i)]['text']:
+            try:
+                stemmedWord = stemWord(word)
+                DOCUMENTS[doc]["D"+str(i)]['text'].remove(word)
+            except IndexError:
+                stemmedWord = word
+            DOCUMENTS[doc]["D"+str(i)]['text'].append(stemmedWord)
         for stopword in STOPWORD_LIST:
             if stopword in DOCUMENTS[doc]["D"+str(i)]['text']:
                 DOCUMENTS[doc]["D"+str(i)]['text'].remove(stopword)
         i += 1
 
+### stemWord
+# param:
+#   word -
+#
+# Stems a provided word using the Porter2 stemming algorithm.
+###
+def stemWord(word):
+    return stem(word)
+
 if __name__ == "__main__":
+    start_time = time.time()
     populateStopWords()
+    print("Stop Word Population Execution Time:", time.time() - start_time)
     populateDocuments()
-    print(len(STOPWORD_LIST))
-    print(DOCUMENTS[0]['D0']['text'])
-    filterStopWordsFromDocs()
-    print(DOCUMENTS[0]['D0']['text'])
+    print("Document Population Execution Time:", time.time() - start_time)
+    filterDocs()
+    print("Filter Documents:", time.time() - start_time)
