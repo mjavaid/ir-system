@@ -79,7 +79,7 @@ class APPLICATION(Tk):
         # Creating action buttons
         openBtn = ttk.Button(btnFrame, text="Open", command=self.openHandler)
         saveBtn = ttk.Button(btnFrame, text="Save", command=self.saveHandler)
-        uploadBtn = ttk.Button(btnFrame, text="Upload", command=self.uploadHandler)
+        uploadBtn = ttk.Button(btnFrame, text="Upload Queries", command=self.uploadHandler)
 
         # Adding action buttons to frame
         openBtn.grid(column=0, row=0, sticky=(W))
@@ -202,12 +202,12 @@ class APPLICATION(Tk):
         if uploadFileName == "": return
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        time.sleep(2)
+        self.update_idletasks()
         try:
             self.setAppStatus("Uploading query file... %s" % ((uploadFileName).split("/"))[-1])
             progressInfo["value"] += 1
             self.setTaskProgress(progressInfo)
-            time.sleep(2)
+            self.update_idletasks()
         except FileNotFoundError:
             self.setAppStatus("Error: File Not Found")
             progressInfo["value"] = progressInfo["maximum"]
@@ -216,7 +216,7 @@ class APPLICATION(Tk):
         self.setAppStatus("Parsing file...")
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        time.sleep(2)
+        self.update_idletasks()
         try:
             topics = parse(uploadFileName)
         except ParseError:
@@ -230,7 +230,6 @@ class APPLICATION(Tk):
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
         self.USER_QUERY.set("[USER_QUERIES]")
-        time.sleep(2)
 
 
     ### executeHandler
@@ -263,17 +262,18 @@ class APPLICATION(Tk):
         if openFileName == "": return
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        time.sleep(2)
+        self.update_idletasks()
         try:
             self.setAppStatus("Opening file... %s" % ((openFileName).split("/"))[-1])
             input = open(openFileName, "r")
             progressInfo["value"] += 1
             self.setTaskProgress(progressInfo)
-            time.sleep(2)
+            self.update_idletasks()
         except FileNotFoundError:
             self.setAppStatus("Error: File Not Found")
             progressInfo["value"] = progressInfo["maximum"]
             self.setTaskProgress(progressInfo)
+            self.update_idletasks()
             return
         fileContents = (input.read()).split("\n")
         results = [result.split(",") for result in fileContents if result != ""]
@@ -281,16 +281,16 @@ class APPLICATION(Tk):
             self.setAppStatus("Error: Invalid File Format")
             progressInfo["value"] = progressInfo["maximum"]
             self.setTaskProgress(progressInfo)
+            self.update_idletasks()
             return
         self.setAppStatus("Populating results...")
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        time.sleep(2)
+        self.update_idletasks()
         self.populateResults(results)
         self.setAppStatus("Results populated.")
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
-        time.sleep(2)
         input.close()
 
     ### saveHandler
@@ -387,7 +387,7 @@ class APPLICATION(Tk):
             self.PROGRESS_BAR['maximum'] = progressInfo['maximum']
         self.PROGRESS_BAR['value'] = progressInfo['value']
 
-""" END FUNCTIONAL METHODS """
+    """ END FUNCTIONAL METHODS """
 
 if __name__=="__main__":
     app = APPLICATION()
