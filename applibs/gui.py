@@ -8,14 +8,17 @@ try:
     from tkinter import *
     from tkinter import ttk
     from tkinter import filedialog
+    from tkinter import messagebox
 except ImportError:
     from Tkinter import *
     import ttk
     import TkFileDialog as filedialog
+    import TkMessageBox as messagebox
 
 import time
 from xml.etree.ElementTree import parse
 from xml.etree.ElementTree import ParseError
+import csv
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
@@ -26,6 +29,8 @@ from xml.etree.ElementTree import ParseError
 class APPLICATION(Tk):
     USER_QUERY = None
     APP_STATUS = None
+    MODIFIED = False
+    SAVE_FILE = False
     
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
@@ -58,8 +63,6 @@ class APPLICATION(Tk):
         actionmenu = Menu(menubar)
         actionmenu.add_command(label="Execute", command=self.executeHandler)
         actionmenu.add_command(label="Run Test Queries", command=self.runTestCasesHandler)
-        actionmenu.add_separator()
-        actionmenu.add_command(label="Reset", command=self.resetHandler)
     
         # Help menu
         helpmenu = Menu(menubar)
@@ -240,14 +243,6 @@ class APPLICATION(Tk):
         print("EXECUTE")
         self.setAppStatus("Executing query... \"%s\"" % self.USER_QUERY.get())
 
-    ### resetHandler
-    # param:
-    #   event -
-    ###
-    def resetHandler(self, event=None):
-        print("RESET")
-        self.setAppStatus("Resetting...")
-
     ### openHandler
     # param:
     #   event -
@@ -277,7 +272,7 @@ class APPLICATION(Tk):
             return
         fileContents = (input.read()).split("\n")
         results = [result.split(",") for result in fileContents if result != ""]
-        if len(results[0]) != VALID_LENGTH:
+        if not results or len(results[0]) != VALID_LENGTH:
             self.setAppStatus("Error: Invalid File Format")
             progressInfo["value"] = progressInfo["maximum"]
             self.setTaskProgress(progressInfo)
@@ -287,7 +282,13 @@ class APPLICATION(Tk):
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
         self.update_idletasks()
+        if self.SAVE_FILE != False and self.MODIFIED:
+            shouldSave = messagebox.askquestion("Unsaved Changes",
+                "Save Changes?", icon="warning")
+            if shouldSave: saveHandler()
+        self.SAVE_FILE = False
         self.populateResults(results)
+        self.SAVE_FILE = openFileName
         self.setAppStatus("Results populated.")
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
@@ -298,8 +299,10 @@ class APPLICATION(Tk):
     #   event -
     ###
     def saveHandler(self, event=None):
-        print("SAVE")
-        self.setAppStatus("Saving results...")
+        if not self.MODIFIED or len(self.RESULT_TREE.get_children()) == 0: return
+        else:
+            if self.SAVE_FILE == False: self.saveAsHandler(event)
+            else: self.saveResults(self.SAVE_FILE)
 
     ### saveAsHandler
     # param:
@@ -307,7 +310,11 @@ class APPLICATION(Tk):
     ###
     def saveAsHandler(self, event=None):
         print("SAVE AS")
-        self.setAppStatus("Saving results...")
+        saveAsFileName = filedialog.asksaveasfilename(filetypes=[
+            ('Text File', '*.txt'),
+            ('All Files', '*.*')
+        ])
+        if saveAsFileName: self.saveResults(saveAsFileName)
 
     ### quitHandler
     # param:
@@ -370,6 +377,26 @@ class APPLICATION(Tk):
         for iid in self.RESULT_TREE.get_children(): self.RESULT_TREE.delete(iid)
         for result in results:
             self.RESULT_TREE.insert('', 'end', text=result[0], values=result[1:])
+        if self.SAVE_FILE != False: self.MODIFIED = True
+
+    ### saveResults
+    # param:
+    #   filename -
+    ###
+    def saveResults(self, filename):
+        self.setAppStatus("Saving results...")
+        self.update_idletasks()
+        results = []
+        i = 0
+        for iid in self.RESULT_TREE.get_children():
+            result = (self.RESULT_TREE.item(iid))['values']
+            result.insert(0, i)
+            results.append(result)
+            i += 1
+        with open(filename, "w") as output:
+            writer = csv.writer(output)
+            writer.writerows(results)
+        self.setAppStatus("Results saved to: [%s]" % (filename.split("/"))[-1])
 
     ### setAppStatus
     # param:
