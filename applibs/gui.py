@@ -13,10 +13,13 @@ except ImportError:
     import ttk
     import TkFileDialog as filedialog
 
+import time
+
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 RESULT_TREE = None
 userQuery = None
 APP_STATUS = None
+PROGRESS_BAR = None
 
 ### createGUI:
 # Creates the user interface for the application. Creates front end 
@@ -27,7 +30,7 @@ def createGUI(app=None):
         print("No Root Provided")
         return
     
-    global RESULT_TREE, APP_STATUS
+    global RESULT_TREE, APP_STATUS, PROGRESS_BAR
 
     APP_STATUS = StringVar()
 
@@ -175,11 +178,20 @@ def createGUI(app=None):
     # Creating status label
     statusLabel = ttk.Label(statusFrame, textvariable=APP_STATUS)
 
-    # Adding status label to status frame
-    statusLabel.grid(column=0, row=0, sticky=(N,S,E,W))
+    # Creating progress bar
+    PROGRESS_BAR = ttk.Progressbar(statusFrame, orient=HORIZONTAL,
+        length=100, mode="determinate")
+    PROGRESS_BAR['value'] = 0
+
+    # Adding status components to the status frame
+    PROGRESS_BAR.grid(column=0, row=0, sticky=(E), padx=(5, 5))
+    ttk.Separator(statusFrame, orient=VERTICAL).grid(column=1, row=0, sticky=(N,S))
+    statusLabel.grid(column=2, row=0, sticky=(W), padx=(5, 5))
 
     # Adding status frame to window
-    statusFrame.grid(column=0, row=6, sticky=(N,S,E,W))
+    statusFrame.grid(column=0, row=6, sticky=(E,W))
+
+    #setTaskProgress({"maximum":0, "value":0})
     """ End app status frame """
 
     # Adding main window to app
@@ -216,26 +228,43 @@ def resetHandler(event=None):
 #   event -
 ###
 def openHandler(event=None):
+    progressInfo = {"maximum": 4, "value": 0}
     VALID_LENGTH = 5
     openFileName = filedialog.askopenfilename(filetypes=(
         ('Text File', '*.txt'),
         ('All Files', '*.*')
     ))
     if openFileName == "": return
+    progressInfo["value"] += 1
+    setTaskProgress(progressInfo)
+    time.sleep(2)
     try:
         setAppStatus("Opening file... %s" % ((openFileName).split("/"))[-1])
         input = open(openFileName, "r")
+        progressInfo["value"] += 1
+        setTaskProgress(progressInfo)
+        time.sleep(2)
     except FileNotFoundError:
         setAppStatus("Error: File Not Found")
+        progressInfo["value"] = progressInfo["maximum"]
+        setTaskProgress(progressInfo)
         return
     fileContents = (input.read()).split("\n")
     results = [result.split(",") for result in fileContents if result != ""]
     if len(results[0]) != VALID_LENGTH:
         setAppStatus("Error: Invalid File Format")
+        progressInfo["value"] = progressInfo["maximum"]
+        setTaskProgress(progressInfo)
         return
     setAppStatus("Populating results...")
+    progressInfo["value"] += 1
+    setTaskProgress(progressInfo)
+    time.sleep(2)
     populateResults(RESULT_TREE, results)
     setAppStatus("Results populated.")
+    progressInfo["value"] += 1
+    setTaskProgress(progressInfo)
+    time.sleep(2)
     input.close()
 
 ### saveHandler
@@ -329,7 +358,10 @@ def setAppStatus(message):
 #   progressInfo -
 ###
 def setTaskProgress(progressInfo):
-    print("TO DO: TASK PROGRESS")
+    global PROGRESS_BAR
+    if PROGRESS_BAR['maximum'] != progressInfo['maximum']:
+        PROGRESS_BAR['maximum'] = progressInfo['maximum']
+    PROGRESS_BAR['value'] = progressInfo['value']
 
 """ END FUNCTIONAL METHODS """
 
@@ -339,5 +371,3 @@ if __name__=="__main__":
     app.resizable(FALSE, FALSE)
     createGUI(app)
     app.mainloop()
-
-
