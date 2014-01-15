@@ -4,10 +4,15 @@
 # Last Modified: 1/12/14
 """
 
-from tkinter import *
-from tkinter import ttk
+try:
+    from tkinter import *
+    from tkinter import ttk
+except ImportError:
+    from Tkinter import *
+    import ttk
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
+RESULT_TREE = None
 
 ### createGUI:
 # Creates the user interface for the application. Creates front end 
@@ -110,38 +115,64 @@ def createGUI(app=None):
     """ Tree frame """
     treeFrame = ttk.Frame(window, padding=(5,5))
     
+    # Creating vertical and horizontal scrollbars
     treeVScrollBar = ttk.Scrollbar(treeFrame, orient=VERTICAL)
     treeHScrollBar = ttk.Scrollbar(treeFrame, orient=HORIZONTAL)
     
-    resultTree = ttk.Treeview(treeFrame, columns=("docNo", "rank", "score", "tag"), yscrollcommand=treeVScrollBar.set, xscrollcommand=treeHScrollBar.set)
+    # Creating treeview for query results
+    resultTree = ttk.Treeview(treeFrame,
+        columns=("docNo", "rank", "score", "tag"),
+        yscrollcommand=treeVScrollBar.set,
+        xscrollcommand=treeHScrollBar.set
+    )
     
+    # Adding scrollbar functionality to treeview
     treeVScrollBar['command'] = resultTree.yview
     treeHScrollBar['command'] = resultTree.xview
     
+    # Adding columns headings to treeview
     resultTree.heading("#0", text="Topic ID")
     resultTree.heading("docNo", text="Doc No.")
     resultTree.heading("rank", text="Rank")
     resultTree.heading("score", text="Score")
     resultTree.heading("tag", text="Tag")
     
+    # Adding columns to the treeview
     resultTree.column("#0", width=100)
     resultTree.column("docNo", width=150)
     resultTree.column("rank", width=100)
     resultTree.column("score", width=100)
     resultTree.column("tag", width=100)
     
+    # Adding treeview to the frame
     resultTree.grid(column=0, row=0, sticky=(N,S,E,W))
     treeHScrollBar.grid(column=0, row=1, sticky=(E,W))
     treeVScrollBar.grid(column=1, row=0, sticky=(N,S))
     
+    # Populating treeview for demo purposes
     results = []
     for i in range(50):
         results.append(['a', 'b', 'c', 'd'])
-    
     populateResults(resultTree, results)
-    
+
+    # Adding treeview frame to the window
     treeFrame.grid(column=0, row=4)
     """ End tree frame """
+
+    ttk.Separator(window, orient=HORIZONTAL).grid(column=0, row=5, sticky=(W,E))
+
+    """ App status frame """
+    statusFrame = ttk.Frame(window, padding=(5,5))
+
+    # Creating status label
+    statusLabel = ttk.Label(statusFrame, textvariable=appStatus)
+
+    # Adding status label to status frame
+    statusLabel.grid(column=0, row=0, sticky=(N,S,E,W))
+
+    # Adding status frame to window
+    statusFrame.grid(column=0, row=6, sticky=(N,S,E,W))
+    """ End app status frame """
 
     # Adding main window to app
     window.grid(column=0, row=0, sticky=(N,S,E,W))
@@ -154,6 +185,7 @@ def createGUI(app=None):
 ###
 def uploadHandler(event=None):
     print("UPLOAD")
+    appStatus.set("Uploading document...")
 
 ### executeHandler
 # param:
@@ -161,6 +193,7 @@ def uploadHandler(event=None):
 ###
 def executeHandler(event=None):
     print("EXECUTE")
+    appStatus.set("Executing query...")
 
 ### resetHandler
 # param:
@@ -168,6 +201,7 @@ def executeHandler(event=None):
 ###
 def resetHandler(event=None):
     print("RESET")
+    appStatus.set("Resetting...")
 
 ### openHandler
 # param:
@@ -175,6 +209,7 @@ def resetHandler(event=None):
 ###
 def openHandler(event=None):
     print("OPEN")
+    appStatus.set("Opening file...")
 
 ### saveHandler
 # param:
@@ -182,6 +217,7 @@ def openHandler(event=None):
 ###
 def saveHandler(event=None):
     print("SAVE")
+    appStatus.set("Saving results...")
 
 ### saveAsHandler
 # param:
@@ -189,6 +225,7 @@ def saveHandler(event=None):
 ###
 def saveAsHandler(event=None):
     print("SAVE AS")
+    appStatus.set("Saving results...")
 
 ### quitHandler
 # param:
@@ -232,6 +269,7 @@ def instructionsHandler(event=None):
 ###
 def runTestCasesHandler(event=None):
     print("RUN TEST CASES")
+    appStatus.set("Running test cases...")
 
 """ END ACTION HANDLERS """
 
@@ -254,6 +292,7 @@ def populateResults(resultTree, results):
 if __name__=="__main__":
     app = Tk()
     userQuery = StringVar()
+    appStatus = StringVar()
     app.title("IR System - CSI4107")
     app.resizable(FALSE, FALSE)
     createGUI(app)
