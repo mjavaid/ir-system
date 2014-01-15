@@ -16,19 +16,18 @@ import time
 # Filters out the stop words from the documents in the corpus.
 ###
 def filterDocs():
-    i = 0
     for doc in range(len(DOCUMENTS)):
-        for word in DOCUMENTS[doc]["D"+str(i)]['text']:
+        for word in DOCUMENTS[doc]["D"+str(doc)]['text']:
             try:
                 stemmedWord = stemWord(word)
-                DOCUMENTS[doc]["D"+str(i)]['text'].remove(word)
+                DOCUMENTS[doc]["D"+str(doc)]['text'].remove(word)
             except IndexError:
+                print(doc)
                 stemmedWord = word
-            DOCUMENTS[doc]["D"+str(i)]['text'].append(stemmedWord)
+            DOCUMENTS[doc]["D"+str(doc)]['text'].append(stemmedWord)
         for stopword in STOPWORD_LIST:
-            if stopword in DOCUMENTS[doc]["D"+str(i)]['text']:
-                DOCUMENTS[doc]["D"+str(i)]['text'].remove(stopword)
-        i += 1
+            if stopword in DOCUMENTS[doc]["D"+str(doc)]['text']:
+                DOCUMENTS[doc]["D"+str(doc)]['text'].remove(stopword)
 
 ### stemWord
 # param:
@@ -45,5 +44,7 @@ if __name__ == "__main__":
     print("Stop Word Population Execution Time:", time.time() - start_time)
     populateDocuments()
     print("Document Population Execution Time:", time.time() - start_time)
+    print(DOCUMENTS[39813]["D39813"]['text'])
     filterDocs()
+    print(DOCUMENTS[39813]["D39813"]['text'])
     print("Filter Documents:", time.time() - start_time)
