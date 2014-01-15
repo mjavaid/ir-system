@@ -1,0 +1,14 @@
+PyIR System - CSI 4107
+
+Assignment 1
+
+Authors:
+> Muhammad Sajawal Javaid
+> Rayan Alsubhi
+
+General Info:
+This system queries a static corpus of 48,404 tweets to returns the 1000 most relevant tweets based on the user query.
+
+Users can also upload queries in the documented format or run professor provided test queries.
+
+The system uses a large dictionary of stop word and Porter2 stemming to filter the corpus and user queries. An inverted table is maintained for the corpus and CosineAngle implementation is used for ranking the documents per query basis.
