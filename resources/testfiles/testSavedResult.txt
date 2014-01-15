@@ -1,0 +1,3 @@
+0,doc0,rank0,score0,tag0
+1,doc1,rank1,score1,tag1
+2,doc2,rank2,score2,tag2
