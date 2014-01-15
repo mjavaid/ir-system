@@ -7,9 +7,11 @@
 try:
     from tkinter import *
     from tkinter import ttk
+    from tkinter import filedialog
 except ImportError:
     from Tkinter import *
     import ttk
+    import TkFileDialog as filedialog
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 RESULT_TREE = None
@@ -22,6 +24,8 @@ def createGUI(app=None):
     if app == None:
         print("No Root Provided")
         return
+    
+    global RESULT_TREE
     
     window = ttk.Frame(app)
 
@@ -120,40 +124,40 @@ def createGUI(app=None):
     treeHScrollBar = ttk.Scrollbar(treeFrame, orient=HORIZONTAL)
     
     # Creating treeview for query results
-    resultTree = ttk.Treeview(treeFrame,
+    RESULT_TREE = ttk.Treeview(treeFrame,
         columns=("docNo", "rank", "score", "tag"),
         yscrollcommand=treeVScrollBar.set,
         xscrollcommand=treeHScrollBar.set
     )
     
     # Adding scrollbar functionality to treeview
-    treeVScrollBar['command'] = resultTree.yview
-    treeHScrollBar['command'] = resultTree.xview
+    treeVScrollBar['command'] = RESULT_TREE.yview
+    treeHScrollBar['command'] = RESULT_TREE.xview
     
     # Adding columns headings to treeview
-    resultTree.heading("#0", text="Topic ID")
-    resultTree.heading("docNo", text="Doc No.")
-    resultTree.heading("rank", text="Rank")
-    resultTree.heading("score", text="Score")
-    resultTree.heading("tag", text="Tag")
+    RESULT_TREE.heading("#0", text="Topic ID")
+    RESULT_TREE.heading("docNo", text="Doc No.")
+    RESULT_TREE.heading("rank", text="Rank")
+    RESULT_TREE.heading("score", text="Score")
+    RESULT_TREE.heading("tag", text="Tag")
     
     # Adding columns to the treeview
-    resultTree.column("#0", width=100)
-    resultTree.column("docNo", width=150)
-    resultTree.column("rank", width=100)
-    resultTree.column("score", width=100)
-    resultTree.column("tag", width=100)
+    RESULT_TREE.column("#0", width=100)
+    RESULT_TREE.column("docNo", width=150)
+    RESULT_TREE.column("rank", width=100)
+    RESULT_TREE.column("score", width=100)
+    RESULT_TREE.column("tag", width=100)
     
     # Adding treeview to the frame
-    resultTree.grid(column=0, row=0, sticky=(N,S,E,W))
+    RESULT_TREE.grid(column=0, row=0, sticky=(N,S,E,W))
     treeHScrollBar.grid(column=0, row=1, sticky=(E,W))
     treeVScrollBar.grid(column=1, row=0, sticky=(N,S))
     
     # Populating treeview for demo purposes
     results = []
     for i in range(50):
-        results.append(['a', 'b', 'c', 'd'])
-    populateResults(resultTree, results)
+        results.append([str(i), 'a', 'b', 'c', 'd'])
+    populateResults(RESULT_TREE, results)
 
     # Adding treeview frame to the window
     treeFrame.grid(column=0, row=4)
@@ -208,8 +212,27 @@ def resetHandler(event=None):
 #   event -
 ###
 def openHandler(event=None):
-    print("OPEN")
-    appStatus.set("Opening file...")
+    VALID_LENGTH = 5
+    openFileName = filedialog.askopenfilename(filetypes=(
+        ('Text File', '*.txt'),
+        ('All Files', '*.*')
+    ))
+    if openFileName == "": return
+    try:
+        appStatus.set("Opening file... %s" % ((openFileName).split("/"))[-1])
+        input = open(openFileName, "r")
+    except FileNotFoundError:
+        appStatus.set("Error: File Not Found")
+        return
+    fileContents = (input.read()).split("\n")
+    results = [result.split(",") for result in fileContents if result != ""]
+    if len(results[0]) != VALID_LENGTH:
+        appStatus.set("Error: Invalid File Format")
+        return
+    appStatus.set("Populating results...")
+    populateResults(RESULT_TREE, results)
+    appStatus.set("Results populated.")
+    input.close()
 
 ### saveHandler
 # param:
@@ -244,16 +267,20 @@ def aboutHandler(event=None):
     aboutWindow.title("About")
     aboutWindow.resizable(FALSE, FALSE)
     
+    ABOUT_INFO_FILE = "../resources/AboutInfo.txt"
+    aboutInfo = open(ABOUT_INFO_FILE, "r")
+    
     # Create main frame for about window
-    aboutFrame = ttk.Frame(aboutWindow, padding=(5,5))
+    aboutFrame = ttk.Frame(aboutWindow, padding=(10,10))#, width=100, height=25)
     
     # Create text box to store about information
-    aboutTextBox = Text(aboutFrame, borderwidth=3, relief="sunken", width=40, height=15)
+    aboutTextBox = Text(aboutFrame, width=50, height=22)
     aboutTextBox.config(font=("consolas", 12), wrap="word")
-    aboutTextBox.insert('1.0', DEFAULT_TEXTBOX_TEXT)
+    aboutTextBox.insert('1.0', aboutInfo.read())
+    aboutTextBox.config(state=DISABLED)
     
     # Adding text box and main frame to the window
-    aboutTextBox.grid(column=0, row=0)
+    aboutTextBox.grid(column=0, row=0, sticky=(N,S,E,W))
     aboutFrame.grid(column=0, row=0, sticky=(N,S,E,W))
 
 ### instructionsHandler
@@ -282,10 +309,8 @@ def runTestCasesHandler(event=None):
 ###
 def populateResults(resultTree, results):
     for iid in resultTree.get_children(): resultTree.delete(iid)
-    i = 0
     for result in results:
-        resultTree.insert('', 'end', text=str(i), values=result)
-        i += 1
+        resultTree.insert('', 'end', text=result[0], values=result[1:])
 
 """ END FUNCTIONAL METHODS """
 
