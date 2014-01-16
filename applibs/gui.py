@@ -20,6 +20,10 @@ from xml.etree.ElementTree import parse
 from xml.etree.ElementTree import ParseError
 import csv
 
+from preprocessing import filterQuery
+# Temporary imports
+from utils import populateStopWords
+
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
 ### createGUI:
@@ -226,6 +230,7 @@ class APPLICATION(Tk):
             self.setTaskProgress(progressInfo)
             return
         for topic in topics.findall('top'):
+            # Add logic to handle the queries
             print(topic.findtext('num'))
         self.setAppStatus("User queries set. Press <EXECUTE> to run.")
         progressInfo["value"] += 1
@@ -239,6 +244,8 @@ class APPLICATION(Tk):
     ###
     def executeHandler(self, event=None):
         print("TODO: EXECUTE")
+        query = self.USER_QUERY.get()
+        print(query,"|", filterQuery(query))
         self.setAppStatus("Executing query... \"%s\"" % self.USER_QUERY.get())
 
     ### openHandler
@@ -414,5 +421,6 @@ class APPLICATION(Tk):
     """ END FUNCTIONAL METHODS """
 
 if __name__=="__main__":
+    populateStopWords()
     app = APPLICATION()
     app.mainloop()
