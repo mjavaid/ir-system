@@ -42,7 +42,7 @@ def filterData(data):
     words = result.split(" ")
     for word in words:
         if word in STOPWORD_LIST:
-            result = re.sub("\\b"+word+"\\b", "", result)
+            result = re.sub("\s\s+", " ", re.sub("\\b"+word+"\\b", '', result))
             continue
         try:
             stemmedWord = stemWord(word)
