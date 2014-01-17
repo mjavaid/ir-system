@@ -4,36 +4,88 @@
 # Last Modified: 1/12/14
 """
 
+from math import log
 #declare a TABLE_LIST That holds tokens with their df and tf
 TABLE_LIST={}
+TOTAL_DOCS = 0
 
 ### addToTable
 # add the tokens from the token array to the table and update df and the linked list
 # param: docNum, token
 ###
-def addToTable(docNum,tokenArr):
-    for token in tokenArr:  
+def addToTable(docNum,tokens):
+    
+    global TOTAL_DOCS,TABLE_LIST
+    TOTAL_DOCS+=1
+    for token in tokens:  
         # Check if the token is already in the list
         if token in TABLE_LIST:
-            # If True, increment df
-            TABLE_LIST[token]['df']+=1
             # Check if the document number is already in the list
-            
             index = 0
             for i in TABLE_LIST[token]['doc']:
                 if docNum in i:
                     # increment the tf
                     TABLE_LIST[token]['doc'][index][docNum]+=1
                 else:
-                    # If not, add the document number to the list and initialize it to 1
+                    # If not, add the document number to the list and initialize it to 1, also increment df
                     TABLE_LIST[token]['doc'].append({docNum:1})
+                    TABLE_LIST[token]['df']+=1
                     break
                 index+=1
         else:
             # If Token is not in the dictionary, add it and initialize both df and occurence to 1
             TABLE_LIST[token]={'df':1,'doc':[{docNum :1}]}
+    calculateIDF()
+### normalizeTF
+# normalize tf for each token by dividing the tf by the maximum occurance in a document
+###
+def normalizeTF(token):
+    
+    global TABLE_LIST
+    #get the tf values in all documents for the specified token
+    tf_list = [(list(i.values()))[0] for i in TABLE_LIST[token]['doc']]
+    # get the maximum value of tf
+    max_tf = max(tf_list)
+    # now divide each value by the maximum value of tf
+    index = 0
+    for i in (TABLE_LIST[token]['doc']):
+        key = (list(i.keys()))[0] #each doc has only one item so we use [0]
+        value = (list(i.values()))[0]
+        TABLE_LIST[token]['doc'][index][key] = value / max_tf
+        index += 1
+        
+### getWeight
+# get the weighted total for a given word in the table or in aquery
+# param: query
+#
+###
+def getWeight(query):
+    tfQ
+        
+        
+        
+    print("TO DO")
+    
+### calculateIDF
+# calculates IDF for all words in the index
+#
+###
+def calculateIDF():
+    global TABLE_LIST, TOTAL_DOCS
+    print(TOTAL_DOCS)
+    for i in TABLE_LIST:
+        dfVal = log((TOTAL_DOCS/(TABLE_LIST[i]['df'])),2)
+        TABLE_LIST[i]['idf'] = dfVal
+    
         
 if __name__ == "__main__":
     addToTable('D0',['game','bad','bad'])
+    for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
     addToTable('D1',['game','home','bad'])
+    for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
+    print(TOTAL_DOCS)
+    print(TABLE_LIST)
+    for token in TABLE_LIST:
+        
+        normalizeTF(token)
     for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
