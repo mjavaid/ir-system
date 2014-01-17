@@ -71,10 +71,18 @@ def getWeight(docNum,token):
         else:
             index +=1
     return(tf*TABLE_LIST[token]['idf'])
-        
-        
-        
-    print("TO DO")
+
+### getQueryIDF
+# returns the idf of a given query
+# param: query
+###
+def getQueryIDF(query):
+    
+    global TABLE_LIST
+    if query in TABLE_LIST:
+        return TABLE_LIST[query]['idf']
+    else:
+         return 0
     
 ### calculateIDF
 # calculates IDF for all words in the index
@@ -100,3 +108,4 @@ if __name__ == "__main__":
         normalizeTF(token)
     for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
     print(getWeight('D1','home'))
+    
