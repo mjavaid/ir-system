@@ -55,12 +55,22 @@ def normalizeTF(token):
         index += 1
         
 ### getWeight
-# get the weighted total for a given word in the table or in aquery
-# param: query
+# get the weighted total for a given word in the table for a given document
+# param: docNum, token
 #
 ###
-def getWeight(query):
-    tfQ
+def getWeight(docNum,token):
+    
+    global TABLE_LIST
+    # w_ij = tf_ij x idf_i
+    index = 0
+    for i in TABLE_LIST[token]['doc']:
+        if docNum in i:
+            # increment the tf
+            tf = TABLE_LIST[token]['doc'][index][docNum]
+        else:
+            index +=1
+    return(tf*TABLE_LIST[token]['idf'])
         
         
         
@@ -89,3 +99,4 @@ if __name__ == "__main__":
         
         normalizeTF(token)
     for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
+    print(getWeight('D1','home'))
