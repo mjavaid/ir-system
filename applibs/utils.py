@@ -46,11 +46,24 @@ def populateStopWords():
         if stopword != "": STOPWORD_LIST.append(stopword)
     input.close()
 
-
+### geTtokenTF
+# returns the a list of tf for tokens in the query
+# It will return a list of occurances, and it checks for duplicates
+###
+def getTokenTF(query):
+    count = []
+    uniqueQuery = []
+    for item in query:
+        if item not in uniqueQuery:
+            uniqueQuery.append(item)
+            count.append(query.count(item))
+    return count
+    
 """ END GLOBAL SYSTEM FUNCTIONS """
 
 if __name__ == "__main__":
-    populateDocuments()
-    populateStopWords()
+    #populateDocuments()
+    #populateStopWords()
     #print(DOCUMENTS)
     #print(STOPWORD_LIST)
+    print(getTokenTF(["hello",'hi',"hello"]))
