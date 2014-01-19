@@ -12,8 +12,8 @@ try:
 except ImportError:
     from Tkinter import *
     import ttk
-    import TkFileDialog as filedialog
-    import TkMessageBox as messagebox
+    import tkFileDialog as filedialog
+    import tkMessageBox as messagebox
 
 import time
 from xml.etree.ElementTree import parse
