@@ -12,10 +12,9 @@ try:
 except ImportError:
     from Tkinter import *
     import ttk
-    import TkFileDialog as filedialog
-    import TkMessageBox as messagebox
+    import tkFileDialog as filedialog
+    import tkMessageBox as messagebox
 
-import time
 from xml.etree.ElementTree import parse
 from xml.etree.ElementTree import ParseError
 import csv
@@ -23,6 +22,7 @@ import csv
 from preprocessing import filterQuery
 # Temporary imports
 from utils import populateStopWords
+import time
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
