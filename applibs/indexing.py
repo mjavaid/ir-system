@@ -5,6 +5,7 @@
 """
 
 from math import log
+#import utils
 #declare a TABLE_LIST That holds tokens with their df and tf
 TABLE_LIST={}
 TOTAL_DOCS = 0
@@ -79,6 +80,7 @@ def getWeight(docNum,token):
 def getQueryIDF(query):
     
     global TABLE_LIST
+    print(TABLE_LIST)
     if query in TABLE_LIST:
         return TABLE_LIST[query]['idf']
     else:
@@ -97,7 +99,7 @@ def calculateIDF():
     
         
 if __name__ == "__main__":
-    addToTable('D0',['game','bad','bad'])
+    '''addToTable('D0',['game','bad','bad'])
     for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
     addToTable('D1',['game','home','bad'])
     for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
@@ -108,4 +110,11 @@ if __name__ == "__main__":
         normalizeTF(token)
     for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
     print(getWeight('D1','home'))
+    addToTable('D0',['new','york','times'])
+    addToTable('D1',['new','york','post'])
+    addToTable('D2',['los','angeles','times'])
+    for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
+    Qu=['new','new','times']
+    print(resultfetching.getSim('D0',Qu))'''
+    
     

@@ -66,4 +66,4 @@ if __name__ == "__main__":
     #populateStopWords()
     #print(DOCUMENTS)
     #print(STOPWORD_LIST)
-    print(getTokenTF(["hello",'hi',"hello"]))
+    print(" ")
