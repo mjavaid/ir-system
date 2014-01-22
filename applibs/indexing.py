@@ -37,24 +37,24 @@ def addToTable(docNum,tokens):
         else:
             # If Token is not in the dictionary, add it and initialize both df and occurence to 1
             TABLE_LIST[token]={'df':1,'doc':[{docNum :1}]}
-    calculateIDF()
 
-### normalizeTF
+### normalizeTFValues
 # normalize tf for each token by dividing the tf by the maximum occurance in a document
 ###
-def normalizeTF(token):
+def normalizeTFValues():
     global TABLE_LIST
-    #get the tf values in all documents for the specified token
-    tf_list = [(list(i.values()))[0] for i in TABLE_LIST[token]['doc']]
-    # get the maximum value of tf
-    max_tf = max(tf_list)
-    # now divide each value by the maximum value of tf
-    index = 0
-    for i in (TABLE_LIST[token]['doc']):
-        key = (list(i.keys()))[0] #each doc has only one item so we use [0]
-        value = (list(i.values()))[0]
-        TABLE_LIST[token]['doc'][index][key] = value / max_tf
-        index += 1
+    for token in TABLE_LIST:
+        #get the tf values in all documents for the specified token
+        tf_list = [(list(i.values()))[0] for i in TABLE_LIST[token]['doc']]
+        # get the maximum value of tf
+        max_tf = max(tf_list)
+        # now divide each value by the maximum value of tf
+        index = 0
+        for i in (TABLE_LIST[token]['doc']):
+            key = (list(i.keys()))[0] #each doc has only one item so we use [0]
+            value = (list(i.values()))[0]
+            TABLE_LIST[token]['doc'][index][key] = value / max_tf
+            index += 1
         
 ### getWeight
 # get the weighted total for a given word in the table for a given document
@@ -95,7 +95,7 @@ def getQueryIDF(query):
 # calculates IDF for all words in the index
 #
 ###
-def calculateIDF():
+def calculateIDFValues():
     global TABLE_LIST, TOTAL_DOCS
     for token in TABLE_LIST:
         idf = log(( TOTAL_DOCS / (TABLE_LIST[token]['df']) ), 2)
