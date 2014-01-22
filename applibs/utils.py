@@ -30,7 +30,10 @@ def populateDocuments():
     for doc in docs:
         docInfo = doc.partition("\t")
         if docInfo[TEXT_INDEX]:
-            DOCUMENTS.append({"D"+str(i):{"id": docInfo[TWEET_ID], "text": docInfo[TEXT_INDEX]}})
+            docTokens = docInfo[TEXT_INDEX].split(" ")
+            DOCUMENTS.append({"D"+str(i):
+                {"id": docInfo[TWEET_ID], "text": docInfo[TEXT_INDEX], "tokens": docTokens}
+            })
             i += 1
     input.close()
 
