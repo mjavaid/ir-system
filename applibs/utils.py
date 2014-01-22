@@ -61,6 +61,13 @@ def getTokenTF(query):
             uniqueQuery.append(item)
             count.append(query.count(item))
     return count
+
+### getTotalDocuments
+# Returns the total number of documents in the corpus.
+###
+def getTotalDocuments():
+    global DOCUMENTS
+    return len(DOCUMENTS)
     
 """ END GLOBAL SYSTEM FUNCTIONS """
 
