@@ -76,15 +76,14 @@ def getWeight(docNum,token):
     result = (tf*TABLE_LIST[token]['idf'])
     return result
 
-### getQueryIDF
+### getIDFForToken
 # returns the idf of a given query
-# param: query
+# param: token
 ###
-def getQueryIDF(query):
+def getIDFForToken(token):
     global TABLE_LIST
-    print("\nTABLE_LIST:\n",TABLE_LIST,"\n")
-    if query in TABLE_LIST:
-        return TABLE_LIST[query]['idf']
+    if token in TABLE_LIST:
+        return TABLE_LIST[token]['idf']
     else:
          return 0
     

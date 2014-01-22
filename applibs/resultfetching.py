@@ -14,29 +14,21 @@ from indexing import *
 def getSim(docNum, query):
     global TABLE_LIST
     uniqueQuery= []
-    nominator=0
-    denominator=0
-    sumOfWij=0
-    sumOfWiq=0
-    sim=0
+    numerator, denominator, sumOfWij, sumOfWiq, sim = 0.0, 0, 0, 0, 0
     for item in query:
         if item not in uniqueQuery:
             uniqueQuery.append(item)
     tfList=utils.getTokenTF(query)
     for i in range(len(uniqueQuery)):
-        print("unique Query:",uniqueQuery[i])
-        queryIDF=getQueryIDF(uniqueQuery[i])
-        print("QueryIDF: ", queryIDF)
-        if not queryIDF == 0:
-            print("Query weight: ",queryIDF*(tfList[i]/(max(tfList))))
-            print("weight of: ",uniqueQuery[i]," :",getWeight(docNum,item))
-            nominator+= (getWeight(docNum,uniqueQuery[i]))*(queryIDF*(tfList[i]/(max(tfList))))
-            sumOfWij+=(getWeight(docNum,uniqueQuery[i])*getWeight(docNum,uniqueQuery[i]))
-            sumOfWiq+=((queryIDF*(tfList[i]/max(tfList)))*(queryIDF*(tfList[i]/max(tfList))))
-    print("Nom:",nominator)
-    print("sumWIJ: ", sumOfWij)
-    print("sumWIQ: ", sumOfWiq)
-    sim= nominator/((sumOfWij*sumOfWiq)**(0.5))
+        tokenIDF=getIDFForToken(uniqueQuery[i])
+        if not tokenIDF == 0:
+            docTokenWeight = getWeight(docNum,uniqueQuery[i])
+            queryTokenWeight = tokenIDF*(tfList[i]/(max(tfList)))
+            numerator += docTokenWeight * queryTokenWeight
+            sumOfWij += docTokenWeight * docTokenWeight
+            sumOfWiq += queryTokenWeight * queryTokenWeight
+    denominator = ( sumOfWij * sumOfWiq ) ** (0.5)
+    if not denominator == 0: sim = numerator / denominator
     return sim
 
 if __name__ == "__main__":
@@ -44,6 +36,14 @@ if __name__ == "__main__":
     addToTable('D0',['new','york','times'])
     addToTable('D1',['new','york','post'])
     addToTable('D2',['los','angeles','times'])
-    for token in TABLE_LIST: print(token, " >>", TABLE_LIST[token])
-    Qu=['new','new','times']
-    print("Simil: ",getSim('D0',Qu))
+    normalizeTFValues()
+    calculateIDFValues()
+    print("\n\n------------------\n\n")
+    print("RESULTFETCHING::TABLE_LIST:",TABLE_LIST)
+    print("\n\n------------------\n\n")
+    Qu=['times','los']
+    simResults = []
+    simResults.append({"doc": "D0", "score": getSim('D0',Qu)})
+    simResults.append({"doc": "D1", "score": getSim('D1',Qu)})
+    simResults.append({"doc": "D2", "score": getSim('D2',Qu)})
+    print("RESULTS:", simResults,"\n")
