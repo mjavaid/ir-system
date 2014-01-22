@@ -61,22 +61,18 @@ def normalizeTFValues():
 # param: docNum, token
 #
 ###
-def getWeight(docNum,token,show=None):
+def getWeight(docNum,token):
     global TABLE_LIST
     # w_ij = tf_ij x idf_i
     index = 0
     tf = 0
-    print("INDEXING::DocNum:", docNum)
     for i in TABLE_LIST[token]['doc']:
-        print("INDEXING::i: %s || INDEXING::token: %s" % (i, token))
         if docNum in i:
             # increment the tf
-            print("FOUND::",TABLE_LIST[token]['doc'][index][docNum])
             tf = TABLE_LIST[token]['doc'][index][docNum]
         else:
             index +=1
     result = (tf*TABLE_LIST[token]['idf'])
-    print("r:",result,"tf:",tf,"idf",TABLE_LIST[token]['idf'])
     return result
 
 ### getQueryIDF
@@ -91,7 +87,7 @@ def getQueryIDF(query):
     else:
          return 0
     
-### calculateIDF
+### calculateIDFValues
 # calculates IDF for all words in the index
 #
 ###
