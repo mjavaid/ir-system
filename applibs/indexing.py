@@ -70,6 +70,7 @@ def getWeight(docNum,token):
         if docNum in i:
             # increment the tf
             tf = TABLE_LIST[token]['doc'][index][docNum]
+            break
         else:
             index +=1
     result = (tf*TABLE_LIST[token]['idf'])
