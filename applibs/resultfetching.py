@@ -31,6 +31,18 @@ def getSim(docNum, query):
     if not denominator == 0: sim = numerator / denominator
     return sim
 
+### getDocsForTokens
+# Returns all the documents for the list of tokens.
+###
+def getDocsForTokens(tokens):
+    global TABLE_LIST
+    docs = []
+    for token in tokens:
+        if token in TABLE_LIST:
+            for doc in TABLE_LIST[token]['doc']:
+                docs.append((list(doc.keys()))[0])
+    return docs
+
 if __name__ == "__main__":
     global TABLE_LIST
     addToTable('D0',['new','york','times'])
@@ -47,3 +59,4 @@ if __name__ == "__main__":
     simResults.append({"doc": "D1", "score": getSim('D1',Qu)})
     simResults.append({"doc": "D2", "score": getSim('D2',Qu)})
     print("RESULTS:", simResults,"\n")
+    print(getDocsForTokens(['times']))

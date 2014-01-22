@@ -22,9 +22,10 @@ DOCUMENTS = []
 # Reads the corpus file and populates the DOCUMENTS list in the IR system
 # which will be used for querying.
 ###
-def populateDocuments():
+def populateDocuments(documentsFile=None):
     global DOCUMENTS
-    input = open(DOCUMENTS_FILE, "r")
+    if documentsFile == None: input = open(DOCUMENTS_FILE, "r")
+    else: input = open(documentsFile, "r")
     docs = (input.read()).split("\n")
     i = 0
     for doc in docs:
@@ -41,9 +42,10 @@ def populateDocuments():
 # Reads the English stop words file and populates the STOPWORD_LIST
 # global variable.
 ###
-def populateStopWords():
+def populateStopWords(stopWordFile=None):
     global STOPWORD_LIST
-    input = open(STOPWORD_FILE, "r")
+    if stopWordFile == None: input = open(STOPWORD_FILE, "r")
+    else: input = open(stopWordFile, "r")
     stopwords = (input.read()).split("\n")
     for stopword in stopwords:
         if stopword != "": STOPWORD_LIST.append(stopword)

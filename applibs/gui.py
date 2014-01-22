@@ -20,9 +20,12 @@ from xml.etree.ElementTree import ParseError
 import csv
 
 from preprocessing import filterQuery
+from resultfetching import getDocsForTokens, getSim
 # Temporary imports
 from utils import populateStopWords
 import time
+
+from pprint import pprint
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
@@ -245,7 +248,19 @@ class APPLICATION(Tk):
     def executeHandler(self, event=None):
         print("TODO: EXECUTE")
         query = self.USER_QUERY.get()
-        print(query,"|", filterQuery(query))
+        queryTokens = query.split(" ")
+        queryTokens = filterQuery(queryTokens)
+        docs = getDocsForTokens(queryTokens)
+        docs = list(set(docs))
+        simResults = []
+        for doc in docs:
+            simResults.append({"doc": doc, "score": getSim(doc,queryTokens)})
+        simResults = sorted(simResults, key=lambda k:k['score'], reverse=True)
+        i = 0
+        for result in simResults:
+            pprint(result)
+            if i == 5: break
+            i += 1
         self.setAppStatus("Executing query... \"%s\"" % self.USER_QUERY.get())
 
     ### openHandler

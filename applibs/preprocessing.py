@@ -6,6 +6,9 @@
 
 from utils import STOPWORD_LIST, DOCUMENTS
 from exlibraries.porter2 import stem
+
+from indexing import addToTable
+
 import re
 # Temporarily imported for the main method
 from utils import populateDocuments, populateStopWords
@@ -20,6 +23,10 @@ from sre_constants import error
 def filterDocs():
     for doc in range(len(DOCUMENTS)):
         DOCUMENTS[doc]["D"+str(doc)]['tokens'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['tokens'])
+        print("%s of %s filtered..." % (doc+1, len(DOCUMENTS)))
+        print(">> Adding to table...")
+        addToTable("D"+str(doc), DOCUMENTS[doc]["D"+str(doc)]['tokens'])
+        print(">> Adding Complete.")
 
 ### filterQuery
 # param:
@@ -40,7 +47,6 @@ def filterData(tokens):
     global STOPWORD_LIST
     result = tokens.copy()
     for token in tokens:
-        print(token)
         if token in STOPWORD_LIST:
             result.remove(token)
             continue
@@ -52,6 +58,7 @@ def filterData(tokens):
             pass
         except error:
             pass
+    result = [word.lower() for word in result]
     return result
 
 ### stemWord
