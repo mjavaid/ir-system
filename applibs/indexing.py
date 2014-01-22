@@ -5,6 +5,7 @@
 """
 
 from math import log
+from utils import getTotalDocuments
 #import utils
 #declare a TABLE_LIST That holds tokens with their df and tf
 TABLE_LIST={}
@@ -15,10 +16,10 @@ TOTAL_DOCS = 0
 # param: docNum, token
 ###
 def addToTable(docNum,tokens):
-    
     global TOTAL_DOCS,TABLE_LIST
     TOTAL_DOCS+=1
-    for token in tokens:  
+    FOUND = False
+    for token in tokens:
         # Check if the token is already in the list
         if token in TABLE_LIST:
             # Check if the document number is already in the list
@@ -27,21 +28,21 @@ def addToTable(docNum,tokens):
                 if docNum in i:
                     # increment the tf
                     TABLE_LIST[token]['doc'][index][docNum]+=1
-                else:
-                    # If not, add the document number to the list and initialize it to 1, also increment df
-                    TABLE_LIST[token]['doc'].append({docNum:1})
-                    TABLE_LIST[token]['df']+=1
-                    break
+                    FOUND = True
                 index+=1
+            if not FOUND:
+                # If not, add the document number to the list and initialize it to 1, also increment df
+                TABLE_LIST[token]['doc'].append({docNum:1})
+                TABLE_LIST[token]['df']+=1
         else:
             # If Token is not in the dictionary, add it and initialize both df and occurence to 1
             TABLE_LIST[token]={'df':1,'doc':[{docNum :1}]}
     calculateIDF()
+
 ### normalizeTF
 # normalize tf for each token by dividing the tf by the maximum occurance in a document
 ###
 def normalizeTF(token):
-    
     global TABLE_LIST
     #get the tf values in all documents for the specified token
     tf_list = [(list(i.values()))[0] for i in TABLE_LIST[token]['doc']]
@@ -60,27 +61,31 @@ def normalizeTF(token):
 # param: docNum, token
 #
 ###
-def getWeight(docNum,token):
-    
+def getWeight(docNum,token,show=None):
     global TABLE_LIST
     # w_ij = tf_ij x idf_i
     index = 0
+    tf = 0
+    print("INDEXING::DocNum:", docNum)
     for i in TABLE_LIST[token]['doc']:
+        print("INDEXING::i: %s || INDEXING::token: %s" % (i, token))
         if docNum in i:
             # increment the tf
+            print("FOUND::",TABLE_LIST[token]['doc'][index][docNum])
             tf = TABLE_LIST[token]['doc'][index][docNum]
         else:
             index +=1
-    return(tf*TABLE_LIST[token]['idf'])
+    result = (tf*TABLE_LIST[token]['idf'])
+    print("r:",result,"tf:",tf,"idf",TABLE_LIST[token]['idf'])
+    return result
 
 ### getQueryIDF
 # returns the idf of a given query
 # param: query
 ###
 def getQueryIDF(query):
-    
     global TABLE_LIST
-    print(TABLE_LIST)
+    print("\nTABLE_LIST:\n",TABLE_LIST,"\n")
     if query in TABLE_LIST:
         return TABLE_LIST[query]['idf']
     else:
@@ -92,10 +97,9 @@ def getQueryIDF(query):
 ###
 def calculateIDF():
     global TABLE_LIST, TOTAL_DOCS
-    print(TOTAL_DOCS)
-    for i in TABLE_LIST:
-        dfVal = log((TOTAL_DOCS/(TABLE_LIST[i]['df'])),2)
-        TABLE_LIST[i]['idf'] = dfVal
+    for token in TABLE_LIST:
+        idf = log(( TOTAL_DOCS / (TABLE_LIST[token]['df']) ), 2)
+        TABLE_LIST[token]['idf'] = idf
     
         
 if __name__ == "__main__":
