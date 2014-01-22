@@ -19,7 +19,7 @@ from sre_constants import error
 ###
 def filterDocs():
     for doc in range(len(DOCUMENTS)):
-        DOCUMENTS[doc]["D"+str(doc)]['text'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['text'])
+        DOCUMENTS[doc]["D"+str(doc)]['tokens'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['tokens'])
 
 ### filterQuery
 # param:
@@ -36,17 +36,18 @@ def filterQuery(query):
 #
 # A generic filter function that is used as a helper for other functions.
 ###
-def filterData(data):
+def filterData(tokens):
     global STOPWORD_LIST
-    result = data
-    words = result.split(" ")
-    for word in words:
-        if word in STOPWORD_LIST:
-            result = re.sub("\s\s+", " ", re.sub("\\b"+word+"\\b", '', result))
+    result = tokens.copy()
+    for token in tokens:
+        print(token)
+        if token in STOPWORD_LIST:
+            result.remove(token)
             continue
         try:
-            stemmedWord = stemWord(word)
-            result = re.sub("\\b"+word+"\\b", stemmedWord, result)
+            stemmedToken = stemToken(token)
+            result.remove(token)
+            result.append(stemmedToken)
         except IndexError:
             pass
         except error:
@@ -59,8 +60,8 @@ def filterData(data):
 #
 # Stems a provided word using the Porter2 stemming algorithm.
 ###
-def stemWord(word):
-    return stem(word)
+def stemToken(token):
+    return stem(token)
 
 if __name__ == "__main__":
     start_time = time.time()
