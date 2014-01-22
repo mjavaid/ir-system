@@ -23,7 +23,7 @@ def getSim(docNum, query):
         tokenIDF=getIDFForToken(uniqueQuery[i])
         if not tokenIDF == 0:
             docTokenWeight = getWeight(docNum,uniqueQuery[i])
-            queryTokenWeight = tokenIDF*(tfList[i]/(max(tfList)))
+            queryTokenWeight = tokenIDF * (0.5 + (0.5 * ( tfList[i] / (max(tfList)) )))
             numerator += docTokenWeight * queryTokenWeight
             sumOfWij += docTokenWeight * docTokenWeight
             sumOfWiq += queryTokenWeight * queryTokenWeight
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     print("\n\n------------------\n\n")
     print("RESULTFETCHING::TABLE_LIST:",TABLE_LIST)
     print("\n\n------------------\n\n")
-    Qu=['times','los']
+    Qu=['new','times']
     simResults = []
     simResults.append({"doc": "D0", "score": getSim('D0',Qu)})
     simResults.append({"doc": "D1", "score": getSim('D1',Qu)})
