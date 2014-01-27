@@ -27,6 +27,8 @@ import time
 
 from pprint import pprint
 
+from utils import DOCUMENTS
+
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
 ### createGUI:
@@ -159,10 +161,10 @@ class APPLICATION(Tk):
         treeVScrollBar.grid(column=1, row=0, sticky=(N,S))
     
         # Populating treeview for demo purposes
-        results = []
-        for i in range(50):
-            results.append([str(i), 'a', 'b', 'c', 'd'])
-        self.populateResults(results)
+        #results = []
+        #for i in range(50):
+        #results.append([str(i), 'a', 'b', 'c', 'd'])
+        #self.populateResults(results)
 
         # Adding treeview frame to the window
         treeFrame.grid(column=0, row=4)
@@ -256,6 +258,7 @@ class APPLICATION(Tk):
         for doc in docs:
             simResults.append({"doc": doc, "score": getSim(doc,queryTokens)})
         simResults = sorted(simResults, key=lambda k:k['score'], reverse=True)
+        self.populateResults(simResults)
         i = 0
         for result in simResults:
             pprint(result)
@@ -392,9 +395,15 @@ class APPLICATION(Tk):
     #   results  -
     ###
     def populateResults(self, results):
+        global DOCUMENTS
         for iid in self.RESULT_TREE.get_children(): self.RESULT_TREE.delete(iid)
+        i = 1
         for result in results:
-            self.RESULT_TREE.insert('', 'end', text=result[0], values=result[1:])
+            if i == 0: print("TEST", result)
+            doc = result['doc']
+            value = ["MB01", DOCUMENTS[int(doc[1:])][doc]['id'], i, result['score'], "myRun"]
+            self.RESULT_TREE.insert('', 'end', text=value[0], values=value[1:])
+            i += 1
         self.MODIFIED = True
 
     ### saveResults
