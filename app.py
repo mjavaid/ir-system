@@ -4,7 +4,7 @@
 # Last Modified: 1/12/14
 """
 
-import sys
+import sys, getopt
 
 sys.path.append('./applibs/')
 
@@ -15,7 +15,19 @@ from applibs.initialize import initialize
 
 from applibs.gui import APPLICATION
 
-if __name__=="__main__":
-    initialize(STOPWORD_FILE, DOCUMENTS_FILE)
+def main(argv):
+    useCache = False
+    try:
+        opts, args = getopt.getopt(argv, "c:", ["use-cache="])
+    except getopt.GetoptError:
+        print("Usage: app.py [-c|--use-cache]")
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ("-c", "--use-cache"):
+            useCache = True
+    initialize(STOPWORD_FILE, DOCUMENTS_FILE, useCache)
     app = APPLICATION()
     app.mainloop()
+
+if __name__=="__main__":
+    main(sys.argv[1:])

@@ -4,7 +4,10 @@
 # Last Modified: 1/12/14
 """
 
+print("in resultfetching")
+
 import utils
+from utils import TABLE_LIST
 from indexing import *
 
 ### getSim
@@ -36,6 +39,7 @@ def getSim(docNum, query):
 ###
 def getDocsForTokens(tokens):
     global TABLE_LIST
+    print(TABLE_LIST, " || ", tokens)
     docs = []
     for token in tokens:
         if token in TABLE_LIST:

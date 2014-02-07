@@ -4,6 +4,8 @@
 # Last Modified: 1/12/14
 """
 
+print("in gui")
+
 try:
     from tkinter import *
     from tkinter import ttk
@@ -24,10 +26,13 @@ from resultfetching import getDocsForTokens, getSim
 # Temporary imports
 from utils import populateStopWords
 import time
+import json
 
 from pprint import pprint
 
-from utils import DOCUMENTS
+from utils import DOCUMENTS, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE
+
+from utils import TABLE_LIST
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
@@ -254,6 +259,7 @@ class APPLICATION(Tk):
         queryTokens = filterQuery(queryTokens)
         docs = getDocsForTokens(queryTokens)
         docs = list(set(docs))
+        print(docs)
         simResults = []
         for doc in docs:
             simResults.append({"doc": doc, "score": getSim(doc,queryTokens)})
@@ -339,9 +345,15 @@ class APPLICATION(Tk):
     #   event -
     ###
     def quitHandler(self, event=None):
+        global DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE, DOCUMENTS, TABLE_LIST
         if self.MODIFIED:
             shouldSave = messagebox.askquestion("Unsaved Changes", "Save Changes?", icon="warning")
             if shouldSave == "yes": self.saveHandler()
+        """with open(DOCUMENTS_CACHE_FILE, "w") as outfile:
+            json.dump(DOCUMENTS, outfile)
+        outfile.close()
+        with open(TABLE_LIST_CACHE_FILE, "w") as outfile:
+            json.dump(TABLE_LIST, outfile)"""
         self.quit()
 
     ### aboutHandler

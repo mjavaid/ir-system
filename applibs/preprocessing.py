@@ -4,14 +4,22 @@
 # Last Modified: 1/12/14
 """
 
+print("in preprocessing")
+
+try:
+    from tkinter import messagebox
+except ImportError:
+    import tkMessageBox as messagebox
+
 from utils import STOPWORD_LIST, DOCUMENTS
 from exlibraries.porter2 import stem
+import sys, os, json
 
-from indexing import addToTable
+from indexing import addToTable, populateTable
 
 import re
 # Temporarily imported for the main method
-from utils import populateDocuments, populateStopWords
+from utils import populateDocuments, populateStopWords, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE
 # Temporarily imported for execution testing
 import time
 from sre_constants import error
@@ -20,13 +28,21 @@ from sre_constants import error
 ### filterStopWordsFromDocs
 # Filters out the stop words from the documents in the corpus.
 ###
-def filterDocs():
-    for doc in range(len(DOCUMENTS)):
-        DOCUMENTS[doc]["D"+str(doc)]['tokens'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['tokens'])
-        print("%s of %s filtered..." % (doc+1, len(DOCUMENTS)))
-        print(">> Adding to table...")
-        addToTable("D"+str(doc), DOCUMENTS[doc]["D"+str(doc)]['tokens'])
-        print(">> Adding Complete.")
+def filterDocs(useCache=False):
+    global DOCUMENTS
+    if(not (useCache and os.path.exists(DOCUMENTS_CACHE_FILE))):
+        useCache = False
+    if useCache:
+        print("USING CACHE DATA")
+        cacheData = open(DOCUMENTS_CACHE_FILE).read()
+        DOCUMENTS = json.loads(cacheData)
+        addToTable(None, None, useCache)
+    else:
+        for doc in range(len(DOCUMENTS)):
+            DOCUMENTS[doc]["D"+str(doc)]['tokens'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['tokens'])
+            addToTable("D"+str(doc), DOCUMENTS[doc]["D"+str(doc)]['tokens'])
+            sys.stdout.write("\r{0} of {1} documents filtered...".format(doc+1, len(DOCUMENTS)))
+            sys.stdout.flush()
 
 ### filterQuery
 # param:

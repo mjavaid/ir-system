@@ -4,19 +4,34 @@
 # Last Modified: 1/12/14
 """
 
+print("in indexing")
+
 from math import log
-from utils import getTotalDocuments
+from utils import getTotalDocuments, TABLE_LIST_CACHE_FILE, TABLE_LIST
+
+import os, json
 #import utils
 #declare a TABLE_LIST That holds tokens with their df and tf
-TABLE_LIST={}
+
+"""if(os.path.exists(TABLE_LIST_CACHE_FILE)):
+    cacheData = open(TABLE_LIST_CACHE_FILE).read()
+    TABLE_LIST = json.loads(cacheData)
+else:"""
 TOTAL_DOCS = 0
 
 ### addToTable
 # add the tokens from the token array to the table and update df and the linked list
 # param: docNum, token
 ###
-def addToTable(docNum,tokens):
-    global TOTAL_DOCS,TABLE_LIST
+def addToTable(docNum=None,tokens=None,useCache=False):
+    global TOTAL_DOCS,TABLE_LIST, TABLE_LIST_CACHE_FILE
+    
+    if useCache:
+        print("CACHE DATA GALORE")
+        cacheData = open(TABLE_LIST_CACHE_FILE).read()
+        TABLE_LIST = json.loads(cacheData)
+        return
+    
     TOTAL_DOCS+=1
     FOUND = False
     for token in tokens:
@@ -37,6 +52,15 @@ def addToTable(docNum,tokens):
         else:
             # If Token is not in the dictionary, add it and initialize both df and occurence to 1
             TABLE_LIST[token]={'df':1,'doc':[{docNum :1}]}
+
+### populateTable
+# param:
+#   tableData
+###
+def populateTable():
+    global TABLE_LIST
+    cacheData = open(TABLE_LIST_CACHE_FILE).read()
+    TABLE_LIST = json.loads(cacheData)
 
 ### normalizeTFValues
 # normalize tf for each token by dividing the tf by the maximum occurance in a document
