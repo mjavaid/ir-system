@@ -7,15 +7,15 @@
 print("in resultfetching")
 
 import utils
-from utils import TABLE_LIST
-from indexing import *
-
+#from utils import TABLE_LIST
+#from indexing import *
+from utils import *
 ### getSim
 # returns the similarity between a given document and a query using the cosine similarity
 # param: docNum, query
 ###
 def getSim(docNum, query):
-    global TABLE_LIST
+    #global TABLE_LIST
     uniqueQuery= []
     numerator, denominator, sumOfWij, sumOfWiq, sim = 0.0, 0, 0, 0, 0
     for item in query:
@@ -38,24 +38,25 @@ def getSim(docNum, query):
 # Returns all the documents for the list of tokens.
 ###
 def getDocsForTokens(tokens):
-    global TABLE_LIST
-    print(TABLE_LIST, " || ", tokens)
+    #global TABLE_LIST
+    table = utils.getTableList()
+    #print(table, " || ", tokens)
     docs = []
     for token in tokens:
-        if token in TABLE_LIST:
-            for doc in TABLE_LIST[token]['doc']:
+        if token in table:
+            for doc in table[token]['doc']:
                 docs.append((list(doc.keys()))[0])
     return docs
 
 if __name__ == "__main__":
-    global TABLE_LIST
-    addToTable('D0',['new','york','times'])
-    addToTable('D1',['new','york','post'])
-    addToTable('D2',['los','angeles','times'])
-    normalizeTFValues()
-    calculateIDFValues()
+    
+    utils.addToTable('D0',['new','york','times'])
+    utils.addToTable('D1',['new','york','post'])
+    utils.addToTable('D2',['los','angeles','times'])
+    utils.normalizeTFValues()
+    utils.calculateIDFValues()
     print("\n\n------------------\n\n")
-    print("RESULTFETCHING::TABLE_LIST:",TABLE_LIST)
+    print("RESULTFETCHING::TABLE_LIST:",utils.getTableList())
     print("\n\n------------------\n\n")
     Qu=['new','times']
     simResults = []
