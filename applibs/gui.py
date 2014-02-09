@@ -4,8 +4,6 @@
 # Last Modified: 1/12/14
 """
 
-print("in gui")
-
 try:
     from tkinter import *
     from tkinter import ttk
@@ -32,7 +30,7 @@ from pprint import pprint
 
 from utils import DOCUMENTS, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE
 
-from utils import TABLE_LIST
+import utils
 
 """ DEFAULT_TEXTBOX_TEXT = "Enter a query..." """
 
@@ -259,17 +257,11 @@ class APPLICATION(Tk):
         queryTokens = filterQuery(queryTokens)
         docs = getDocsForTokens(queryTokens)
         docs = list(set(docs))
-        print(docs)
         simResults = []
         for doc in docs:
             simResults.append({"doc": doc, "score": getSim(doc,queryTokens)})
         simResults = sorted(simResults, key=lambda k:k['score'], reverse=True)
         self.populateResults(simResults)
-        i = 0
-        for result in simResults:
-            pprint(result)
-            if i == 5: break
-            i += 1
         self.setAppStatus("Executing query... \"%s\"" % self.USER_QUERY.get())
 
     ### openHandler
@@ -345,15 +337,15 @@ class APPLICATION(Tk):
     #   event -
     ###
     def quitHandler(self, event=None):
-        global DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE, DOCUMENTS, TABLE_LIST
+        global DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE, DOCUMENTS
         if self.MODIFIED:
             shouldSave = messagebox.askquestion("Unsaved Changes", "Save Changes?", icon="warning")
             if shouldSave == "yes": self.saveHandler()
-        """with open(DOCUMENTS_CACHE_FILE, "w") as outfile:
+        with open(DOCUMENTS_CACHE_FILE, "w") as outfile:
             json.dump(DOCUMENTS, outfile)
         outfile.close()
         with open(TABLE_LIST_CACHE_FILE, "w") as outfile:
-            json.dump(TABLE_LIST, outfile)"""
+            json.dump(utils.TABLE_LIST, outfile)
         self.quit()
 
     ### aboutHandler
@@ -411,7 +403,6 @@ class APPLICATION(Tk):
         for iid in self.RESULT_TREE.get_children(): self.RESULT_TREE.delete(iid)
         i = 1
         for result in results:
-            if i == 0: print("TEST", result)
             doc = result['doc']
             value = ["MB01", DOCUMENTS[int(doc[1:])][doc]['id'], i, result['score'], "myRun"]
             self.RESULT_TREE.insert('', 'end', text=value[0], values=value[1:])

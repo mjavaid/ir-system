@@ -4,7 +4,6 @@
 # Last Modified: 1/12/14
 """
 
-print("in preprocessing")
 
 try:
     from tkinter import messagebox
@@ -15,11 +14,12 @@ from utils import STOPWORD_LIST, DOCUMENTS
 from exlibraries.porter2 import stem
 import sys, os, json
 
-from indexing import addToTable, populateTable
+from indexing import addToTable
 
 import re
 # Temporarily imported for the main method
 from utils import populateDocuments, populateStopWords, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE
+import utils
 # Temporarily imported for execution testing
 import time
 from sre_constants import error
@@ -29,14 +29,14 @@ from sre_constants import error
 # Filters out the stop words from the documents in the corpus.
 ###
 def filterDocs(useCache=False):
-    global DOCUMENTS
+    global DOCUMENTS, TABLE_LIST
     if(not (useCache and os.path.exists(DOCUMENTS_CACHE_FILE))):
         useCache = False
     if useCache:
-        print("USING CACHE DATA")
         cacheData = open(DOCUMENTS_CACHE_FILE).read()
         DOCUMENTS = json.loads(cacheData)
-        addToTable(None, None, useCache)
+        cacheData = open(TABLE_LIST_CACHE_FILE).read()
+        utils.TABLE_LIST = json.loads(cacheData)
     else:
         for doc in range(len(DOCUMENTS)):
             DOCUMENTS[doc]["D"+str(doc)]['tokens'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['tokens'])

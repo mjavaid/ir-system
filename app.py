@@ -18,8 +18,8 @@ from applibs.gui import APPLICATION
 def main(argv):
     useCache = False
     try:
-        opts, args = getopt.getopt(argv, "c:", ["use-cache="])
-    except getopt.GetoptError:
+        opts, args = getopt.getopt(argv, "c", ["use-cache"])
+    except getopt.GetoptError as e:
         print("Usage: app.py [-c|--use-cache]")
         sys.exit(2)
     for opt, arg in opts:

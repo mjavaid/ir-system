@@ -26,12 +26,6 @@ TOTAL_DOCS = 0
 def addToTable(docNum=None,tokens=None,useCache=False):
     global TOTAL_DOCS,TABLE_LIST, TABLE_LIST_CACHE_FILE
     
-    if useCache:
-        print("CACHE DATA GALORE")
-        cacheData = open(TABLE_LIST_CACHE_FILE).read()
-        TABLE_LIST = json.loads(cacheData)
-        return
-    
     TOTAL_DOCS+=1
     FOUND = False
     for token in tokens:

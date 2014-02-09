@@ -42,6 +42,13 @@ def populateDocuments(documentsFile=None):
             })
             i += 1
     input.close()
+    
+### populateTableList
+#
+###
+def populateTableList():
+    global TABLE_LIST
+    
 
 ### populateStopWords
 # Reads the English stop words file and populates the STOPWORD_LIST
@@ -83,12 +90,6 @@ def getTotalDocuments():
 def addToTable(docNum=None,tokens=None,useCache=False):
     global TOTAL_DOCS,TABLE_LIST, TABLE_LIST_CACHE_FILE
     
-    if useCache:
-        print("CACHE DATA GALORE")
-        cacheData = open(TABLE_LIST_CACHE_FILE).read()
-        TABLE_LIST = json.loads(cacheData)
-        return
-    
     TOTAL_DOCS+=1
     FOUND = False
     for token in tokens:
@@ -110,10 +111,10 @@ def addToTable(docNum=None,tokens=None,useCache=False):
             # If Token is not in the dictionary, add it and initialize both df and occurence to 1
             TABLE_LIST[token]={'df':1,'doc':[{docNum :1}]}
 
-def populateTable():
+"""def populateTable():
     global TABLE_LIST
     cacheData = open(TABLE_LIST_CACHE_FILE).read()
-    TABLE_LIST = json.loads(cacheData)
+    TABLE_LIST = json.loads(cacheData)"""
 
 ### normalizeTFValues
 # normalize tf for each token by dividing the tf by the maximum occurance in a document

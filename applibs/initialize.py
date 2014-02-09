@@ -1,8 +1,6 @@
-from utils import populateStopWords, populateDocuments
+from utils import populateStopWords, populateDocuments, populateTableList
 from preprocessing import filterDocs
 from indexing import calculateIDFValues, normalizeTFValues
-
-print("in initialize")
 
 def initialize(STOPWORD_FILE=None, DOCUMENTS_FILE=None, useCache=False):
     print("Populating StopWords...")
