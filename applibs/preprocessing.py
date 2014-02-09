@@ -4,24 +4,13 @@
 # Last Modified: 1/12/14
 """
 
-
-try:
-    from tkinter import messagebox
-except ImportError:
-    import tkMessageBox as messagebox
-
-from utils import STOPWORD_LIST, DOCUMENTS
 from exlibraries.porter2 import stem
 import sys, os, json
 
 from indexing import addToTable
 
-import re
-# Temporarily imported for the main method
-from utils import populateDocuments, populateStopWords, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE
+from utils import DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE, STOPWORD_LIST, DOCUMENTS
 import utils
-# Temporarily imported for execution testing
-import time
 from sre_constants import error
 
 
@@ -87,7 +76,7 @@ def stemToken(token):
     return stem(token)
 
 if __name__ == "__main__":
-    start_time = time.time()
+    """start_time = time.time()
     populateStopWords()
     print("Stop Word Population Execution Time:", time.time() - start_time)
     populateDocuments()
@@ -95,4 +84,4 @@ if __name__ == "__main__":
     print(DOCUMENTS[0]["D0"]['text'])
     filterDocs()
     print(DOCUMENTS[0]["D0"]['text'])
-    print("Filter Documents:", time.time() - start_time)
+    print("Filter Documents:", time.time() - start_time)"""

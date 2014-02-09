@@ -1,7 +1,6 @@
 """ gui.py -- Application GUI Functions
 # Created: 1/12/14
 # Author: Muhammad Sajawal Javaid (5933252)
-# Last Modified: 1/12/14
 """
 
 try:
@@ -21,12 +20,7 @@ import csv
 
 from preprocessing import filterQuery
 from resultfetching import getDocsForTokens, getSim
-# Temporary imports
-from utils import populateStopWords
-import time
 import json
-
-from pprint import pprint
 
 from utils import DOCUMENTS, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE
 

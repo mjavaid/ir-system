@@ -1,4 +1,4 @@
-from utils import populateStopWords, populateDocuments, populateTableList
+from utils import populateStopWords, populateDocuments
 from preprocessing import filterDocs
 from indexing import calculateIDFValues, normalizeTFValues
 

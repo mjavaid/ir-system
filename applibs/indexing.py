@@ -1,22 +1,15 @@
 """ indexing.py -- Data Indexing Functions
 # Created: 1/12/14
 # Author: Rayan Alsubhi(5461886)
-# Last Modified: 1/12/14
 """
 
-print("in indexing")
-
 from math import log
-from utils import getTotalDocuments, TABLE_LIST_CACHE_FILE, TABLE_LIST
+from utils import TABLE_LIST_CACHE_FILE, TABLE_LIST
 
 import os, json
 #import utils
 #declare a TABLE_LIST That holds tokens with their df and tf
 
-"""if(os.path.exists(TABLE_LIST_CACHE_FILE)):
-    cacheData = open(TABLE_LIST_CACHE_FILE).read()
-    TABLE_LIST = json.loads(cacheData)
-else:"""
 TOTAL_DOCS = 0
 
 ### addToTable

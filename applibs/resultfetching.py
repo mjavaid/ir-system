@@ -1,15 +1,12 @@
 """ resultfetching.py -- Query & Result Handling Functions
 # Created: 1/12/14
 # Author: Rayan Alsubhi & Muhammad Sajawal Javaid (5933252)
-# Last Modified: 1/12/14
 """
 
-print("in resultfetching")
-
 import utils
-#from utils import TABLE_LIST
-#from indexing import *
+import indexing
 from utils import *
+
 ### getSim
 # returns the similarity between a given document and a query using the cosine similarity
 # param: docNum, query
@@ -23,9 +20,9 @@ def getSim(docNum, query):
             uniqueQuery.append(item)
     tfList=utils.getTokenTF(query)
     for i in range(len(uniqueQuery)):
-        tokenIDF=getIDFForToken(uniqueQuery[i])
+        tokenIDF=indexing.getIDFForToken(uniqueQuery[i])
         if not tokenIDF == 0:
-            docTokenWeight = getWeight(docNum,uniqueQuery[i])
+            docTokenWeight = indexing.getWeight(docNum,uniqueQuery[i])
             queryTokenWeight = tokenIDF * (0.5 + (0.5 * ( tfList[i] / (max(tfList)) )))
             numerator += docTokenWeight * queryTokenWeight
             sumOfWij += docTokenWeight * docTokenWeight
@@ -38,9 +35,7 @@ def getSim(docNum, query):
 # Returns all the documents for the list of tokens.
 ###
 def getDocsForTokens(tokens):
-    #global TABLE_LIST
     table = utils.getTableList()
-    #print(table, " || ", tokens)
     docs = []
     for token in tokens:
         if token in table:
@@ -49,8 +44,7 @@ def getDocsForTokens(tokens):
     return docs
 
 if __name__ == "__main__":
-    
-    utils.addToTable('D0',['new','york','times'])
+    """utils.addToTable('D0',['new','york','times'])
     utils.addToTable('D1',['new','york','post'])
     utils.addToTable('D2',['los','angeles','times'])
     utils.normalizeTFValues()
@@ -64,4 +58,4 @@ if __name__ == "__main__":
     simResults.append({"doc": "D1", "score": getSim('D1',Qu)})
     simResults.append({"doc": "D2", "score": getSim('D2',Qu)})
     print("RESULTS:", simResults,"\n")
-    print(getDocsForTokens(['times']))
+    print(getDocsForTokens(['times']))"""
