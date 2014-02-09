@@ -22,7 +22,7 @@ from preprocessing import filterQuery
 from resultfetching import getDocsForTokens, getSim
 import json
 
-from utils import DOCUMENTS, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE
+from utils import DOCUMENTS, DOCUMENTS_CACHE_FILE, TABLE_LIST_CACHE_FILE, TEST_RESULTS_DIR
 
 import utils
 
@@ -69,7 +69,6 @@ class APPLICATION(Tk):
         # Command menu
         actionmenu = Menu(menubar)
         actionmenu.add_command(label="Execute", command=self.executeHandler)
-        actionmenu.add_command(label="Run Test Queries", command=self.runTestCasesHandler)
     
         # Help menu
         helpmenu = Menu(menubar)
@@ -193,6 +192,8 @@ class APPLICATION(Tk):
 
         # Adding main window to app
         window.grid(column=0, row=0, sticky=(N,S,E,W))
+        
+        self.setAppStatus("Application Initialized.")
 
     """ ACTION HANDLERS """
 
@@ -232,9 +233,12 @@ class APPLICATION(Tk):
             self.setTaskProgress(progressInfo)
             return
         for topic in topics.findall('top'):
-            # Add logic to handle the queries
-            print(topic.findtext('num'))
-        self.setAppStatus("User queries set. Press <EXECUTE> to run.")
+            topicNum = topic.findtext('num').strip().split(" ")[1]
+            query = topic.findtext('title').strip()
+            self.executeHandler(None, True, query)
+            self.SAVE_FILE = TEST_RESULTS_DIR + topicNum + "_Results.txt"
+            self.saveHandler(None)
+        self.setAppStatus("Test queries executed. Saved in: [%s]" % TEST_RESULTS_DIR)
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
         self.USER_QUERY.set("[USER_QUERIES]")
@@ -244,8 +248,9 @@ class APPLICATION(Tk):
     # param:
     #   event -
     ###
-    def executeHandler(self, event=None):
-        query = self.USER_QUERY.get()
+    def executeHandler(self, event=None, fromUpload=False, query=None):
+        if not fromUpload: query = self.USER_QUERY.get()
+        self.setAppStatus("Executing query... \"%s\"" % query)
         queryTokens = query.split(" ")
         queryTokens = filterQuery(queryTokens)
         docs = getDocsForTokens(queryTokens)
@@ -255,7 +260,6 @@ class APPLICATION(Tk):
             simResults.append({"doc": doc, "score": getSim(doc,queryTokens)})
         simResults = sorted(simResults, key=lambda k:k['score'], reverse=True)
         self.populateResults(simResults)
-        self.setAppStatus("Executing query... \"%s\"" % self.USER_QUERY.get())
 
     ### openHandler
     # param:
@@ -296,8 +300,9 @@ class APPLICATION(Tk):
                 "Save Changes?", icon="warning")
             if shouldSave: saveHandler()
         self.SAVE_FILE = False
-        self.populateResults(results)
+        self.populateResults(results, True)
         self.SAVE_FILE = openFileName
+        self.MODIFIED = False
         self.setAppStatus("Results populated.")
         progressInfo["value"] += 1
         self.setTaskProgress(progressInfo)
@@ -334,9 +339,11 @@ class APPLICATION(Tk):
         if self.MODIFIED:
             shouldSave = messagebox.askquestion("Unsaved Changes", "Save Changes?", icon="warning")
             if shouldSave == "yes": self.saveHandler()
+        self.setAppStatus("Caching Documents...")
         with open(DOCUMENTS_CACHE_FILE, "w") as outfile:
             json.dump(DOCUMENTS, outfile)
         outfile.close()
+        self.setAppStatus("Caching Index Table...")
         with open(TABLE_LIST_CACHE_FILE, "w") as outfile:
             json.dump(utils.TABLE_LIST, outfile)
         self.quit()
@@ -374,14 +381,6 @@ class APPLICATION(Tk):
     def instructionsHandler(self, event=None):
         print("TODO: INSTRUCTIONS")
 
-    ### runTestCasesHandler
-    # param:
-    #   event -
-    ###
-    def runTestCasesHandler(self, event=None):
-        print("TODO: RUN TEST CASES")
-        self.setAppStatus("Running test cases...")
-
     """ END ACTION HANDLERS """
 
     """ FUNCTIONAL METHODS """
@@ -391,15 +390,20 @@ class APPLICATION(Tk):
     #   treeview -
     #   results  -
     ###
-    def populateResults(self, results):
+    def populateResults(self, results, fromOpen=False):
         global DOCUMENTS
         for iid in self.RESULT_TREE.get_children(): self.RESULT_TREE.delete(iid)
         i = 1
         for result in results:
-            doc = result['doc']
-            value = ["MB01", DOCUMENTS[int(doc[1:])][doc]['id'], i, result['score'], "myRun"]
+            if not fromOpen:
+                doc = result['doc']
+                value = ["MB01", str(DOCUMENTS[int(doc[1:])][doc]['id']), i, result['score'], "myRun"]
+                if i == 1000: break
+                i += 1
+            else:
+                value = result
             self.RESULT_TREE.insert('', 'end', text=value[0], values=value[1:])
-            i += 1
+            
         self.MODIFIED = True
 
     ### saveResults
@@ -419,6 +423,7 @@ class APPLICATION(Tk):
             writer = csv.writer(output)
             writer.writerows(results)
         self.setAppStatus("Results saved to: [%s]" % (filename.split("/"))[-1])
+        self.MODIFIED = False
 
     ### setAppStatus
     # param:

@@ -8,6 +8,7 @@ STOPWORD_FILE = "../resources/StopWords.txt"
 DOCUMENTS_FILE = "../resources/Trec_microblog11.txt"
 DOCUMENTS_CACHE_FILE = "./resources/cache/documentsCache.json"
 TABLE_LIST_CACHE_FILE = "./resources/cache/tableListCache.json"
+TEST_RESULTS_DIR = "./resources/testResults/"
 TWEET_ID = 0
 TEXT_INDEX = 2
 
