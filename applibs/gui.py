@@ -245,7 +245,6 @@ class APPLICATION(Tk):
     #   event -
     ###
     def executeHandler(self, event=None):
-        print("TODO: EXECUTE")
         query = self.USER_QUERY.get()
         queryTokens = query.split(" ")
         queryTokens = filterQuery(queryTokens)

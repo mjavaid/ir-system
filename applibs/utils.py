@@ -42,6 +42,39 @@ def populateDocuments(documentsFile=None):
     input.close()
     
 
+### getIDFForToken
+# returns the idf of a given query
+# param: token
+###
+def getIDFForToken(token):
+    global TABLE_LIST
+    if token in TABLE_LIST:
+        return TABLE_LIST[token]['idf']
+    else:
+         return 0
+    
+    
+### getWeight
+# get the weighted total for a given word in the table for a given document
+# param: docNum, token
+#
+###
+def getWeight(docNum,token):
+    global TABLE_LIST
+    # w_ij = tf_ij x idf_i
+    index = 0
+    tf = 0
+    for i in TABLE_LIST[token]['doc']:
+        if docNum in i:
+            # increment the tf
+            tf = TABLE_LIST[token]['doc'][index][docNum]
+            break
+        else:
+            index +=1
+    result = (tf*TABLE_LIST[token]['idf'])
+    return result
+    
+
 ### populateStopWords
 # Reads the English stop words file and populates the STOPWORD_LIST
 # global variable.

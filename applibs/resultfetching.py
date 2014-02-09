@@ -20,9 +20,9 @@ def getSim(docNum, query):
             uniqueQuery.append(item)
     tfList=utils.getTokenTF(query)
     for i in range(len(uniqueQuery)):
-        tokenIDF=indexing.getIDFForToken(uniqueQuery[i])
+        tokenIDF=utils.getIDFForToken(uniqueQuery[i])
         if not tokenIDF == 0:
-            docTokenWeight = indexing.getWeight(docNum,uniqueQuery[i])
+            docTokenWeight = utils.getWeight(docNum,uniqueQuery[i])
             queryTokenWeight = tokenIDF * (0.5 + (0.5 * ( tfList[i] / (max(tfList)) )))
             numerator += docTokenWeight * queryTokenWeight
             sumOfWij += docTokenWeight * docTokenWeight
