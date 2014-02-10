@@ -26,6 +26,7 @@ def filterDocs(useCache=False):
         DOCUMENTS = json.loads(cacheData)
         cacheData = open(TABLE_LIST_CACHE_FILE).read()
         utils.TABLE_LIST = json.loads(cacheData)
+        print(len(utils.TABLE_LIST))
     else:
         for doc in range(len(DOCUMENTS)):
             DOCUMENTS[doc]["D"+str(doc)]['tokens'] = filterData(DOCUMENTS[doc]["D"+str(doc)]['tokens'])

@@ -73,7 +73,6 @@ class APPLICATION(Tk):
         # Help menu
         helpmenu = Menu(menubar)
         helpmenu.add_command(label="About", command=self.aboutHandler)
-        helpmenu.add_command(label="Instructions", command=self.instructionsHandler)
     
         # Adding menus to menu bar
         menubar.add_cascade(menu=filemenu, label="File")
@@ -373,13 +372,6 @@ class APPLICATION(Tk):
         # Adding text box and main frame to the window
         aboutTextBox.grid(column=0, row=0, sticky=(N,S,E,W))
         aboutFrame.grid(column=0, row=0, sticky=(N,S,E,W))
-
-    ### instructionsHandler
-    # param:
-    #   event -
-    ###
-    def instructionsHandler(self, event=None):
-        print("TODO: INSTRUCTIONS")
 
     """ END ACTION HANDLERS """
 
